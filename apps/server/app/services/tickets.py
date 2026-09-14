@@ -1,3 +1,4 @@
+import threading
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 
@@ -10,6 +11,13 @@ from ..models import QueueEntry, QueueStatus, Restaurant
 ACTIVE_STATUSES = (QueueStatus.WAITING, QueueStatus.NOTIFIED)
 TERMINAL_STATUSES = (QueueStatus.SEATED, QueueStatus.CANCELLED, QueueStatus.NO_SHOW)
 SEATED_HISTORY_WINDOW = 10
+
+# Position assignment is read-then-write (COUNT + INSERT) and neither DB offers
+# a portable conditional unique index on active positions (terminal rows keep
+# historical positions that would collide). The pilot runs a single process, so
+# joins are serialized in-process; multi-process deployments need a DB-level
+# mechanism instead.
+_join_lock = threading.Lock()
 
 # action -> (allowed source statuses, target status)
 TRANSITIONS: dict[str, tuple[tuple[QueueStatus, ...], QueueStatus]] = {
@@ -59,16 +67,19 @@ def join_queue(
     phone_number: str,
     party_size: int,
 ) -> QueueEntry:
-    entry = QueueEntry(
-        restaurant_id=restaurant.id,
-        customer_name=customer_name,
-        phone_number=phone_number,
-        party_size=party_size,
-        position_index=_next_position(session, restaurant.id),
-    )
-    session.add(entry)
-    session.commit()
-    session.refresh(entry)
+    with _join_lock:
+        # Counting and inserting must be atomic together, or two simultaneous
+        # joins can compute the same next position.
+        entry = QueueEntry(
+            restaurant_id=restaurant.id,
+            customer_name=customer_name,
+            phone_number=phone_number,
+            party_size=party_size,
+            position_index=_next_position(session, restaurant.id),
+        )
+        session.add(entry)
+        session.commit()
+        session.refresh(entry)
     return entry
 
 

@@ -19,3 +19,9 @@ dev = [
     "httpx>=0.28.1",
     "pytest>=9.1.1",
 ]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# `app` is a source package that uv does not install ([tool.uv] package = false),
+# so pytest needs the server dir on sys.path to resolve `import app`.
+pythonpath = ["."]

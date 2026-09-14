@@ -25,7 +25,7 @@
   - `POST /host/{slug}/queue/reorder` → reordenar (last-write-wins, D3).
   - `GET /host/{slug}/report` → conteos del día (se unieron/sentaron/fueron sin sentarse/no vinieron).
 
-- [ ] **T5. Tests pytest (lo que importa)**
+- [x] **T5. Tests pytest (lo que importa)**
   - Unirse a la cola asigna posición contigua.
   - Reindexado al sentar/cancelar (la cola no deja huecos).
   - Transiciones válidas/inválidas (no sentar un ticket que no fue llamado).
