@@ -40,8 +40,11 @@ position_index = request.order.index(entry_id)
 ## Frontend (`apps/web/`) — D29
 
 - **Componentes custom**: la UI se arma con piezas propias y reutilizables en
-  `src/components/` (botón, campo, tarjeta, modal). Sin librerías de UI de
-  terceros; si una pantalla repite markup, se extrae el componente.
+  `src/components/` (botón, campo, tarjeta, modal). Sin librerías de UI con
+  estilos propios; **Base UI** (`@base-ui/react`, D32) aporta primitivas
+  *headless* accesibles (dialog, select, radio…) sin imponer look — el estilo
+  siempre lo definen nuestros componentes y tokens. Si una pantalla repite
+  markup, se extrae el componente.
 - **SOLID aplicado a componentes y hooks**:
   - **S**: componente/función con una sola responsabilidad.
   - **O**: se extiende por props/composición, nunca modificando el comportamiento

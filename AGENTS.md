@@ -45,7 +45,8 @@ pnpm add -D <pkg>     # dev dep
 - **Stack**: Vite + React 19 + TS, Tailwind **v4** (no config file — theming via CSS
   `@theme` in `src/index.css`), TanStack Query v5, TanStack **Router** v1 (file-based
   routes in `src/routes/`, `src/routeTree.gen.ts` is plugin-generated — never edit by
-  hand, re-run `pnpm dev`/`pnpm build` after route changes), React Hook Form v7 (D28).
+  hand, re-run `pnpm dev`/`pnpm build` after route changes), React Hook Form v7 (D28),
+  **Base UI** primitives (`@base-ui/react`, headless — D32).
 - **API client** lives in `src/api/` (`types.ts` mirrors the Pydantic schemas in
   `apps/server/app/api/schemas.py` — snake_case, exact field names). `client.ts`
   exposes `request<T>` + `ApiError` (status + Spanish `detail` from FastAPI).

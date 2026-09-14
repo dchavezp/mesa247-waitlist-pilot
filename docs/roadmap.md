@@ -35,6 +35,7 @@
 
 - [x] **T6. Scaffold Vite + React + TS + Tailwind + TanStack Query + TanStack Router + React Hook Form**
   - `apps/web/` con cliente API tipado (espejo de los schemas Pydantic), QueryClient con polling 5 s + retry con backoff, ruteo por archivos y formularios listos para T7.
+  - Stack ampliado (U16): **Base UI** (`@base-ui/react`, primitivas headless — D32) + theme tokens `@theme` (D30).
 
 - [ ] **T7. Vista comensal — Unirse** (`/join/:slug`)
   - Formulario (nombre, teléfono, comensales) → crea ticket → navega al turno.
