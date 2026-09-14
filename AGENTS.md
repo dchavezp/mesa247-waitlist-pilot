@@ -10,7 +10,7 @@ at a time, approved by the user (`docs/roadmap.md`).
 ## Layout
 
 - `apps/server/` — FastAPI + SQLModel backend (uv-managed, Python 3.12)
-- `apps/web/` — React + TS + Vite frontend, **NOT scaffolded yet** (roadmap T6+)
+- `apps/web/` — React + TS + Vite frontend (scaffolded, T6): Tailwind v4 + TanStack Query + TanStack Router + React Hook Form (D28)
 - `docs/` — product and process docs (see below)
 - `nota_tecnica_mesa247.md` — delivery artifact (architectural note)
 - `prueba-fullstack-mesa247-pages-dev.md` — the exam brief (source of truth for scope)
@@ -31,7 +31,35 @@ uv add <pkg>          # adds dep + updates uv.lock
 uv add --dev <pkg>    # dev dep
 ```
 
-Frontend commands appear once `apps/web` is scaffolded (T6).
+Frontend commands (run from `apps/web/`, package manager is **pnpm**):
+
+```sh
+pnpm dev              # dev server on :5173 (backend CORS already allows it)
+pnpm build            # tsc -b && vite build; regenerates src/routeTree.gen.ts
+pnpm add <pkg>        # adds dep + updates pnpm-lock.yaml
+pnpm add -D <pkg>     # dev dep
+```
+
+## Frontend facts an agent would otherwise guess wrong
+
+- **Stack**: Vite + React 19 + TS, Tailwind **v4** (no config file — theming via CSS
+  `@theme` in `src/index.css`), TanStack Query v5, TanStack **Router** v1 (file-based
+  routes in `src/routes/`, `src/routeTree.gen.ts` is plugin-generated — never edit by
+  hand, re-run `pnpm dev`/`pnpm build` after route changes), React Hook Form v7 (D28).
+- **API client** lives in `src/api/` (`types.ts` mirrors the Pydantic schemas in
+  `apps/server/app/api/schemas.py` — snake_case, exact field names). `client.ts`
+  exposes `request<T>` + `ApiError` (status + Spanish `detail` from FastAPI).
+- **Base URL**: `import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'`
+  (see `.env.example`). The backend routes are **unprefixed** (`/join/{slug}`, etc.),
+  so there is intentionally **no Vite proxy** — the client talks to the API origin
+  directly and CORS allows `http://localhost:5173`.
+- **Polling**: the 5 s short-poll (D2) lives in `src/hooks/useTicketStatus.ts` and
+  `src/hooks/useHostQueue.ts` as `refetchInterval: 5_000`; the QueryClient defaults
+  are retry 3 + exponential backoff (cap 30 s) + staleTime 5 s.
+- **Conventions** (D29, `docs/convenciones.md`): custom components in
+  `src/components/` (no UI libraries), SOLID on components/hooks, theme tokens via
+  `@theme` in `src/index.css` (never hardcoded values), validations with **Zod** +
+  `zodResolver` from React Hook Form (zod + @hookform/resolvers are installed).
 
 ## Backend facts an agent would otherwise guess wrong
 
@@ -60,6 +88,8 @@ Frontend commands appear once `apps/web` is scaffolded (T6).
 - **Comments** (D13): code explains itself; comments only for the non-obvious
   *why* (tradeoffs, gotchas, external constraints). No commented-out code, no
   docstrings that repeat the signature. See `docs/convenciones.md`.
+- **Frontend** (D29): custom components in `src/components/`, SOLID, Tailwind
+  theme via `@theme`, validations with Zod + `zodResolver` — same doc.
 - Every product/architecture decision → new row in `docs/mapeo-conversaciones.md`
   with rejected alternatives. Persistence lives in project docs, **not engram**.
 
@@ -70,6 +100,9 @@ Frontend commands appear once `apps/web` is scaffolded (T6).
 - `mesa247.db` is generated; safe to delete and recreate via seed.
 - `.atl/` is **gitignored** local agent tooling (skill registry cache); keep it
   out of version control — it stays on disk for this machine only.
+- Frontend: React StrictMode double-mounts effects in dev; the TanStack Router
+  vite plugin regenerates `routeTree.gen.ts` only on dev/build runs — a route file
+  added without one of those breaks `tsc`.
 - No `opencode.json` in the repo; global OpenCode config applies.
 - Repo is already published at `github.com/dchavezp/mesa247-waitlist-pilot`
   (branch `main`, one initial commit + follow-ups). T13 delivery still requires

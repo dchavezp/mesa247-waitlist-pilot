@@ -17,8 +17,7 @@ diseñador como única fuente. A partir de ahí trabajamos así:
    se implementa y se verifica de a uno (T1–T13, `docs/roadmap.md`).
 3. **Documentación en el proyecto**: el decision log, el PRD, las convenciones
    y la arquitectura viven en `docs/` — nada queda solo en memoria del chat.
-4. **Estado actual**: T1 (scaffold), T2 (modelos + seed), T3 (endpoints
-   comensal) y T4 (endpoints anfitrión) completos y verificados; T5 (tests) pendiente.
+4. **Estado actual**: T1–T6 completos y verificados (backend completo + tests verdes + frontend scaffolded); T7 (unirse) es lo próximo.
 
 **Quién lleva el timón**: el candidato. Cada decisión de producto, tecnología
 y convención la tomó la persona; la IA propuso y ejecutó según lo aprobado.
@@ -36,12 +35,18 @@ y convención la tomó la persona; la IA propuso y ejecutó según lo aprobado.
 | U7 | 2026-09-14 | "Tablet sí está contemplada para el anfitrión" | Corrección: host responsive es requisito del brief (D17 final) |
 | U8 | 2026-09-14 | "Arquitectura por capas, en contraste con limpia/hexagonal (enfocadas a equipos)" | D19 + `docs/arquitectura.md` + reestructura real del código |
 | U9 | 2026-09-14 | "Mejorar el histórico de conversaciones con resumen y lo que yo comento" | Este documento |
+| U10 | 2026-09-14 | "Vamos a incluir tanstack router, react hook form" al arrancar T6 | Stack del frontend definido: TS Router + RHF (D28) |
+| U11 | 2026-09-14 | "usa pnpm no npm" | Package manager del frontend: pnpm (D28) |
+| U12 | 2026-09-14 | "Incluir como coding standard: custom components, seguir SOLID, manejar el theme con tailwind, las validaciones con zod" | Convenciones de frontend documentadas + `zod` al stack (D29) |
+| U13 | 2026-09-14 | Corrige la config del router plugin: API nueva `tanstackRouter({ target: 'react', autoCodeSplitting: true })` antes de `react()` | `apps/web/vite.config.ts` actualizado; build verde con code-splitting por ruta (chunk `routes-*.js`) |
+| U14 | 2026-09-14 | "Hay que crear las variables para el theme de tailwindcss, puedes usar /impeccable para tener una idea" | Theme tokens en `@theme` (OKLCH, roles semánticos) — D30 |
+| U15 | 2026-09-14 | "Hay que poner como pendiente la seguridad y acceso para la vista de anfitrión" | Corte documentado: T14 pendiente post-piloto (D31), PRD §4.2/§7 alineados |
 
 ## Partes del trabajo
 
 1. **La nota técnica** — completada (`nota_tecnica_mesa247.md`)
 2. **Backend** — FastAPI (en curso: T1–T4 hechos)
-3. **Frontend** — React + TypeScript (pendiente, T6+)
+3. **Frontend** — React + TypeScript en `apps/web/` (T6 hecho: Vite + Tailwind v4 + TS Query + TS Router + RHF; T7–T9 pendientes)
 
 ---
 
@@ -87,6 +92,10 @@ y convención la tomó la persona; la IA propuso y ejecutó según lo aprobado.
 | D25 | 2026-09-14 | Backend | **Reporte del día = 5 números** (`joined`, `seated`, `left_without_seat`, `no_show`, `avg_wait_minutes`); el **pico de cola queda fuera del endpoint** | PRD §4.1 y roadmap T10/T12 ("los 5 números del prototipo"); el pico histórico exacto requiere un log de eventos que el esquema fijo (D14) no tiene — reconstruirlo sería inventar datos | incluir pico aproximado por max posición (inexacto tras reindexar/reordenar), log de auditoría de eventos (cambio de esquema + ceremonia, Fase 2) |
 | D26 | 2026-09-14 | Backend | Reporte: "hoy" = **día UTC**; espera media = promedio join→seated (minutos) de los sentados del día; `seated_at`/`notified_at` respetan el patrón aware-UTC del modelo | el piloto no modela TZ por local (simplificación declarada en el código); D20 ya promedia `seated_at − created_at` | día por timezone del país (mapeo country_code→TZ), ventanas por hora local |
 | D27 | 2026-09-14 | Tests | La prueba de concurrencia de la T5 **destapó una race real**: la asignación de posición era COUNT + INSERT sin atomicidad (10 joins simultáneos → solo 5 puestos únicos). Fix mínimo en `services/tickets.py`: `threading.Lock` en proceso alrededor de count+insert+commit | el piloto corre un solo proceso (uvicorn 1 worker); un índice global rompe porque los tickets terminales conservan posiciones históricas que colisionan con las reindexadas; el índice único parcial funciona en SQLite pero no es portable a MySQL (D8). El lock serializa solo la asignación de posición, no la cola; el comentario documenta que multi-instancia requiere mecanismo a nivel BD | índice único parcial (D8: MySQL no soporta partial indexes), UNIQUE global (colisiona con posiciones históricas), advisory lock de BD (ceremonia innecesaria en single-process) |
+| D28 | 2026-09-14 | Frontend | T6 + adiciones: **TanStack Router** (file-based routing con plugin de Vite) + **React Hook Form** al stack declarado (D9–D10); package manager **pnpm**. Scaffold en `apps/web/`: cliente API tipado espejo de `api/schemas.py`, QueryClient con retry 3 + backoff exponencial (tope 30 s) y polling 5 s en los hooks `useTicketStatus`/`useHostQueue`, Tailwind **v4** (plugin oficial, sin config file) | U10/U11 explícitos; el ruteo por archivos se adapta a 5 pantallas y el RHF evita revalidar formularios a mano; pnpm es más rápido y estricto con el lockfile; Tailwind v4 es el estándar actual sin postcss config. API sin prefijo → el cliente usa `VITE_API_BASE_URL` (default `http://localhost:8000`) y CORS ya permite 5173; sin proxy para no chocar con las rutas del frontend | React Router/Next (más ceremonia), react-final-form (menos ecosistema), npm (descartado por U11), Tailwind v3 + postcss (obsoleto) |
+| D29 | 2026-09-14 | Frontend | Convenciones de frontend (se suman a D13): **componentes custom** en `src/components/` (sin librerías UI), **SOLID** en componentes y hooks (SRP, OCP por props/composición, ISP en props, DIP hacia contratos tipados), **theme vía `@theme`** de Tailwind v4 (cero valores hardcodeados), **validaciones con Zod** + `zodResolver` con RHF. Se agrega `zod` + `@hookform/resolvers` al stack (`docs/convenciones.md`) | U12 explícito; coherencia con D28 (RHF) y D19 (capas: misma dirección de dependencia); zod es el estándar TS y tipa el schema | librería UI completa (shadcn/ui — ceremonia para 5 pantallas), CSS Modules/vanilla-extract (fragmentan el tema), Yup/joi (menos integración con TS) |
+| D30 | 2026-09-14 | Frontend | **Theme tokens** en `@theme` (`apps/web/src/index.css`): roles semánticos en **OKLCH** — superficies (surface, surface-raised), texto (ink, ink-muted), bordes (line), acción (brand, brand-strong, brand-soft, on-brand), estados (success/warning/danger + variantes soft), `font-sans` de sistema (sin webfont) y `shadow-card`. Brand = **terracota** (hue 40) sobre neutros cálidos | U14; guía /impeccable (nuevas paletas en OKLCH, roles y no swatches, color = acción/estado no decoración); PRD §4.3 (comensal con datos móviles → nada de webfonts); parejas fg/bg chequeadas contra WCAG AA. El brand es **supuesto a validar con el diseñador** — cambiar el hue es una línea | azul SaaS genérico (sin significado para hospitalidad), monocromo puro (pierde jerarquía de estados), webfont (peso extra y FOUT en la puerta del local) |
+| D31 | 2026-09-14 | Roadmap/Producto | **Seguridad de host pendiente (T14)**: la vista `/host/{slug}` queda **sin autenticación** en el piloto — acceso por slug (obscuridad, no seguridad); el corte queda registrado como tarea pendiente post-piloto en el roadmap | U15; el brief evalúa "qué se cortó y por qué" → el corte debe estar escrito; PRD §4.2 ya asumía sin login (tablets compartidas, confianza del local) — ahora el roadmap nombra la deuda | PIN por local (simple pero se comparte entre staff), enlace con expiración (sin gestión de usuarios), login completo (ceremonia para un piloto de 3 locales) |
 
 ## Preguntas de tecnología al candidato (resueltas)
 

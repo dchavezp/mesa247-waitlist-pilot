@@ -33,8 +33,8 @@
 
 ## Fase 2 — Frontend
 
-- [ ] **T6. Scaffold Vite + React + TS + Tailwind + TanStack Query**
-  - `apps/web/` con cliente API tipado y QueryClient configurado (polling 5 s, retry con backoff).
+- [x] **T6. Scaffold Vite + React + TS + Tailwind + TanStack Query + TanStack Router + React Hook Form**
+  - `apps/web/` con cliente API tipado (espejo de los schemas Pydantic), QueryClient con polling 5 s + retry con backoff, ruteo por archivos y formularios listos para T7.
 
 - [ ] **T7. Vista comensal — Unirse** (`/join/:slug`)
   - Formulario (nombre, teléfono, comensales) → crea ticket → navega al turno.
@@ -64,6 +64,15 @@
   - Nota técnica revisada + diez líneas del entregable 4.
 
 ---
+
+## Pendiente post-piloto (cortes deliberados)
+
+- [ ] **T14. Seguridad y acceso a la vista de anfitrión** (no se construye en el piloto)
+  - Hoy el acceso es por slug (`/host/{slug}`): **obscuridad, no seguridad** —
+    cualquiera con el link gestiona la cola (asumido en PRD §4.2: tablets
+    compartidas, confianza del local; ver D31).
+  - Pendiente para Fase 2: PIN por local, enlace de acceso con expiración o
+    login — a decidir cuando haya multi-local real.
 
 ## Estimación (actualizada)
 

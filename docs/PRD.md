@@ -114,6 +114,8 @@ Vientos en Lima; Casa Mediterránea en Santiago) en **3 semanas**:
 3. **Aprobación de WhatsApp**: falla puede demorar → aviso in-app en el MVP.
 4. **Datos móviles**: el comensal no depende del wifi del local; las vistas
    son livianas y toleran cortes (polling con retry).
+5. **Acceso de anfitrión**: quien conoce el slug gestiona la cola (sin login
+   en el piloto, §4.2); la seguridad queda como **T14 pendiente** en el roadmap.
 
 ## 8. Métricas de éxito del piloto
 

@@ -36,3 +36,23 @@ count += 1
 # (decisión D3 — ver docs/mapeo-conversaciones.md)
 position_index = request.order.index(entry_id)
 ```
+
+## Frontend (`apps/web/`) — D29
+
+- **Componentes custom**: la UI se arma con piezas propias y reutilizables en
+  `src/components/` (botón, campo, tarjeta, modal). Sin librerías de UI de
+  terceros; si una pantalla repite markup, se extrae el componente.
+- **SOLID aplicado a componentes y hooks**:
+  - **S**: componente/función con una sola responsabilidad.
+  - **O**: se extiende por props/composición, nunca modificando el comportamiento
+    interno de un componente base.
+  - **I**: interfaces de props chicas y específicas; nada de mega-props.
+  - **D**: los componentes dependen de contratos tipados (hooks, cliente API),
+    nunca de globals ni de detalles de implementación.
+- **Theme con Tailwind**: todos los tokens viven en `src/index.css` vía `@theme`
+  (Tailwind v4 — no hay config file). Se usan como clases utilitarias/tokens;
+  nunca colores, medidas ni fuentes hardcodeadas en componentes.
+- **Validaciones con Zod**: toda validación de entrada (formularios, params de
+  ruta) se declara como schema Zod en el borde, integrado a React Hook Form vía
+  `zodResolver`. Un schema por formulario; si el dato cruza a la API, el schema
+  refleja el contrato tipado de `src/api/types.ts`.
