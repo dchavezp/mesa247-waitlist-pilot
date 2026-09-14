@@ -47,6 +47,12 @@ Frontend commands appear once `apps/web` is scaffolded (T6).
   a ticket must be `NOTIFIED` before it can be `SEATED`.
 - Position index is contiguous (1..N), reindexed after seat/cancel/no-show;
   reorder is last-write-wins on the full ordered ID list (D3).
+- Host API (T4, D24–D26): `PATCH /tickets/{id}` takes `{action: notify|seat|cancel|no_show}`
+  — terminal statuses (SEATED/CANCELLED/NO_SHOW) are immutable → 409.
+  `POST /host/{slug}/queue/reorder` accepts ONLY a permutation of the restaurant's
+  active ids → 409 otherwise (tablet resyncs on next poll). `GET /host/{slug}/report`
+  returns the 5 pilot numbers (`joined, seated, left_without_seat, no_show,
+  avg_wait_minutes`) scoped to the **UTC day** (no per-restaurant TZ in the pilot).
 - Client polling must be short polling (5–8 s), not websockets/SSE (D2).
 
 ## Conventions
@@ -62,6 +68,9 @@ Frontend commands appear once `apps/web` is scaffolded (T6).
 - Editor must use `apps/server/.venv/bin/python` as interpreter or
   `pydantic_settings` imports fail to resolve (fixed in `.vscode/settings.json`).
 - `mesa247.db` is generated; safe to delete and recreate via seed.
+- `.atl/` is **gitignored** local agent tooling (skill registry cache); keep it
+  out of version control — it stays on disk for this machine only.
 - No `opencode.json` in the repo; global OpenCode config applies.
-- Repo has no commits yet; delivery (T13) publishes to GitHub/GitLab with access
-  for `talento@mesa247.pe`.
+- Repo is already published at `github.com/dchavezp/mesa247-waitlist-pilot`
+  (branch `main`, one initial commit + follow-ups). T13 delivery still requires
+  granting `talento@mesa247.pe` access to the repo and finishing the final docs.
