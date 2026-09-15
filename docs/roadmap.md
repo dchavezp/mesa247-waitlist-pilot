@@ -55,7 +55,7 @@
     y sobrevive al cierre del navegador; se limpia al sentarse/cancelar y expira a
     las 8 h desde el join. "Ya no voy" del comensal = `POST /tickets/{id}/no-show` → NO_SHOW.
 
-- [ ] **T16. Login tablet (PIN)**
+- [x] **T16. Login tablet (PIN)**
   - `/host/:slug` arranca con pantalla de PIN; token guardado y enviado como `Authorization` en `client.ts`; 401 → vuelve al login.
 
 - [ ] **T9. Vista anfitrión** (`/host/:slug`, detrás del login T16)

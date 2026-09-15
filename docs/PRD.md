@@ -45,8 +45,9 @@ Vientos en Lima; Casa Mediterránea en Santiago) en **3 semanas**:
 - **Comensal — Llamado**: aviso prominente in-app cuando la mesa está lista
   (reemplazo del WhatsApp para el piloto) con botones "Voy en camino" /
   "Ya no voy".
-- **Anfitrión — Cola**: tabla en vivo, llamar/sentar/cancelar, priorizar a
-  frecuentes, modal con QR por si la puerta se llena.
+- **Anfitrión — Cola**: login por PIN del local (T14–T16, D33) y tabla en
+  vivo: llamar/sentar/cancelar, priorizar a frecuentes, modal con QR por si
+  la puerta se llena.
 - **Reporte del día**: conteos de cierre (unidos, sentados, sin sentarse, no
   vinieron, espera media).
 
@@ -56,7 +57,8 @@ Vientos en Lima; Casa Mediterránea en Santiago) en **3 semanas**:
 - Drag & drop complejo (**reemplazado por acciones de priorización rápidas**).
 - Onboarding/CRUD de restaurantes (**seed automático de los 3 locales**).
 - Envío del reporte por correo (**vista web + endpoint**; worker de mail se evalúa en Fase 2).
-- Login de anfitriones (las tablets son compartidas; se asume confianza del local).
+- Gestión de usuarios del login de anfitriones: el PIN por local es por tablet
+  compartida (staff del local), sin cuentas individuales (D33).
 
 ### 4.3 Principio de producto: mobile first
 
@@ -83,7 +85,7 @@ Vientos en Lima; Casa Mediterránea en Santiago) en **3 semanas**:
 ### 5.2 Anfitrión
 
 ```
-/host/{slug} → cola en vivo ordenada por posición
+/host/{slug} → PIN del local → cola en vivo ordenada por posición
 → Llamar   (WAITING → NOTIFIED, dispara el aviso al comensal)
 → Sentar   (NOTIFIED → SEATED)
 → Cancelar (→ CANCELLED)
@@ -116,8 +118,9 @@ Vientos en Lima; Casa Mediterránea en Santiago) en **3 semanas**:
 3. **Aprobación de WhatsApp**: falla puede demorar → aviso in-app en el MVP.
 4. **Datos móviles**: el comensal no depende del wifi del local; las vistas
    son livianas y toleran cortes (polling con retry).
-5. **Acceso de anfitrión**: quien conoce el slug gestiona la cola (sin login
-   en el piloto, §4.2); la seguridad queda como **T14 pendiente** en el roadmap.
+5. **Acceso de anfitrión**: login por **PIN por local** + sesión JWT corta
+   (D33 → T14–T16): quien conoce el PIN del local gestiona la cola; la tablet
+   compartida asume confianza del staff (sin gestión de usuarios).
 
 ## 8. Métricas de éxito del piloto
 

@@ -41,3 +41,13 @@ export interface DayReport {
   no_show: number
   avg_wait_minutes: number
 }
+
+export interface HostLoginRequest {
+  pin: string
+}
+
+export interface HostLoginResponse {
+  access_token: string
+  token_type: string
+  expires_in: number
+}

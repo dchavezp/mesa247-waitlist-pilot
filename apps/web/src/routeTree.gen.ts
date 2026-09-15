@@ -10,12 +10,18 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as HostSlugRouteImport } from './routes/host.$slug'
 import { Route as JoinSlugRouteImport } from './routes/join.$slug'
 import { Route as TicketsIdRouteImport } from './routes/tickets.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HostSlugRoute = HostSlugRouteImport.update({
+  id: '/host/$slug',
+  path: '/host/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const JoinSlugRoute = JoinSlugRouteImport.update({
@@ -31,30 +37,34 @@ const TicketsIdRoute = TicketsIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/host/$slug': typeof HostSlugRoute
   '/join/$slug': typeof JoinSlugRoute
   '/tickets/$id': typeof TicketsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/host/$slug': typeof HostSlugRoute
   '/join/$slug': typeof JoinSlugRoute
   '/tickets/$id': typeof TicketsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/host/$slug': typeof HostSlugRoute
   '/join/$slug': typeof JoinSlugRoute
   '/tickets/$id': typeof TicketsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/join/$slug' | '/tickets/$id'
+  fullPaths: '/' | '/host/$slug' | '/join/$slug' | '/tickets/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/join/$slug' | '/tickets/$id'
-  id: '__root__' | '/' | '/join/$slug' | '/tickets/$id'
+  to: '/' | '/host/$slug' | '/join/$slug' | '/tickets/$id'
+  id: '__root__' | '/' | '/host/$slug' | '/join/$slug' | '/tickets/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  HostSlugRoute: typeof HostSlugRoute
   JoinSlugRoute: typeof JoinSlugRoute
   TicketsIdRoute: typeof TicketsIdRoute
 }
@@ -66,6 +76,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/host/$slug': {
+      id: '/host/$slug'
+      path: '/host/$slug'
+      fullPath: '/host/$slug'
+      preLoaderRoute: typeof HostSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/join/$slug': {
@@ -87,6 +104,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  HostSlugRoute: HostSlugRoute,
   JoinSlugRoute: JoinSlugRoute,
   TicketsIdRoute: TicketsIdRoute,
 }
