@@ -2,7 +2,12 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session
 
 from ...core.db import get_session
-from ...services.tickets import get_restaurant_by_slug, get_ticket_status, join_queue
+from ...services.tickets import (
+    apply_transition,
+    get_restaurant_by_slug,
+    get_ticket_status,
+    join_queue,
+)
 from ..schemas import JoinRequest, JoinResponse, TicketStatusResponse
 
 router = APIRouter(tags=["guest"])
@@ -33,3 +38,20 @@ def ticket_status(
     if ticket is None:
         raise HTTPException(status_code=404, detail="Turno no encontrado")
     return TicketStatusResponse.model_validate(ticket)
+
+
+@router.post("/tickets/{ticket_id}/no-show", response_model=TicketStatusResponse)
+def leave_queue(
+    ticket_id: str, session: Session = Depends(get_session)
+) -> TicketStatusResponse:
+    # El "Ya no voy" del comensal es NO_SHOW (D24): el reporte distingue
+    # CANCELLED (cancela el anfitrión) de NO_SHOW (no vinieron al llamado).
+    # Conocer el id del ticket equivale a poseerlo: UUID no adivinable, mismo
+    # modelo de confianza que GET /tickets/{id} en el piloto.
+    try:
+        status = apply_transition(session, ticket_id, "no_show")
+    except ValueError as e:
+        raise HTTPException(status_code=409, detail=str(e)) from e
+    if status is None:
+        raise HTTPException(status_code=404, detail="Turno no encontrado")
+    return TicketStatusResponse.model_validate(status)

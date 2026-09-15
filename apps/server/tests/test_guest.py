@@ -63,3 +63,33 @@ def test_join_rejects_invalid_payload(client, make_restaurant):
 
 def test_ticket_status_unknown_ticket_returns_404(client):
     assert client.get("/tickets/unknown-id").status_code == 404
+
+
+def test_guest_no_show_leaves_the_queue(client, make_restaurant):
+    slug = make_restaurant().slug
+    first = join(client, slug, "Ana")
+    second = join(client, slug, "Bruno")
+
+    response = client.post(f"/tickets/{first['id']}/no-show")
+    assert response.status_code == 200
+    assert response.json()["status"] == "NO_SHOW"
+
+    # The guest view agrees: second moved from position 2 to 1.
+    status = client.get(f"/tickets/{second['id']}").json()
+    assert status["position"] == 1
+
+    queue = client.get(f"/host/{slug}/queue").json()
+    assert [item["id"] for item in queue] == [second["id"]]
+
+
+def test_guest_no_show_on_terminal_ticket_returns_409(client, make_restaurant):
+    slug = make_restaurant().slug
+    seated_id = join(client, slug, "Ana")["id"]
+    client.patch(f"/tickets/{seated_id}", json={"action": "notify"})
+    client.patch(f"/tickets/{seated_id}", json={"action": "seat"})
+
+    assert client.post(f"/tickets/{seated_id}/no-show").status_code == 409
+
+
+def test_guest_no_show_unknown_ticket_returns_404(client):
+    assert client.post("/tickets/unknown-id/no-show").status_code == 404

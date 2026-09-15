@@ -48,9 +48,12 @@
 - [x] **T7. Vista comensal — Unirse** (`/join/:slug`)
   - Formulario (nombre, teléfono, comensales) → crea ticket → navega al turno.
 
-- [ ] **T8. Vista comensal — Tu turno** (`/tickets/:id`)
+- [x] **T8. Vista comensal — Tu turno** (`/tickets/:id`)
   - Posición en vivo (baja al avanzar la cola), tiempo estimado, botón "Ya no voy",
     banner prominente cuando llega el llamado (reemplazo in-app del WhatsApp, D1).
+  - Persistencia local (U22 → D38): el turno queda en **"Tus turnos"** (localStorage)
+    y sobrevive al cierre del navegador; se limpia al sentarse/cancelar y expira a
+    las 8 h desde el join. "Ya no voy" del comensal = `POST /tickets/{id}/no-show` → NO_SHOW.
 
 - [ ] **T16. Login tablet (PIN)**
   - `/host/:slug` arranca con pantalla de PIN; token guardado y enviado como `Authorization` en `client.ts`; 401 → vuelve al login.

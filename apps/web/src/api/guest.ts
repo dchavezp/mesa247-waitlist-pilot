@@ -11,3 +11,7 @@ export function joinQueue(slug: string, body: JoinRequest): Promise<JoinResponse
 export function getTicketStatus(id: string): Promise<TicketStatus> {
   return request<TicketStatus>(`/tickets/${id}`)
 }
+
+export function leaveQueue(id: string): Promise<TicketStatus> {
+  return request<TicketStatus>(`/tickets/${id}/no-show`, { method: 'POST' })
+}

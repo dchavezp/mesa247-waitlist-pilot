@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import type { QueueStatus } from '../../api/types'
 import { Button } from '../../components/Button'
 
@@ -5,10 +6,13 @@ export function TicketCard({
   status,
   position,
   estimated,
+  actions,
 }: {
   status: QueueStatus
   position: number
   estimated: number
+  /** Acciones del comensal (ej. "Ya no voy") mientras el turno está activo. */
+  actions?: ReactNode
 }) {
 
   const hero = status === 'WAITING' || status === 'NOTIFIED'
@@ -55,6 +59,10 @@ export function TicketCard({
               Acércate a la recepción y te ubicamos en tu mesa.
             </p>
           </>
+        ) : null}
+
+        {actions && (status === 'WAITING' || status === 'NOTIFIED') ? (
+          <div className="mt-6">{actions}</div>
         ) : null}
 
         {status === 'SEATED' ? (

@@ -57,6 +57,13 @@ pnpm add -D <pkg>     # dev dep
 - **Polling**: the 5 s short-poll (D2) lives in `src/hooks/useTicketStatus.ts` and
   `src/hooks/useHostQueue.ts` as `refetchInterval: 5_000`; the QueryClient defaults
   are retry 3 + exponential backoff (cap 30 s) + staleTime 5 s.
+- **Ticket persistence (T8, D38)**: `src/features/ticket/ticketStorage.ts` keeps
+  turns in localStorage (`mesa247.tickets.v1`) with an **8 h TTL** from join; `/`
+  lists them as live "Tus turnos" cards (`SavedTicketCard`, polling per card).
+  Entries are removed on terminal status (SEATED/CANCELLED/NO_SHOW). Guest "Ya no
+  voy" calls `POST /tickets/{id}/no-show` → NO_SHOW (D24) with a Base UI
+  `AlertDialog` confirm (`LeaveTicketButton`); the route/ticket data updates from
+  cache, no extra poll. Re-opening a saved id never extends the TTL.
 - **Conventions** (D29, `docs/convenciones.md`): custom components in
   `src/components/` (no UI libraries), SOLID on components/hooks, theme tokens via
   `@theme` in `src/index.css` (never hardcoded values), validations with **Zod** +
@@ -82,6 +89,9 @@ pnpm add -D <pkg>     # dev dep
   active ids → 409 otherwise (tablet resyncs on next poll). `GET /host/{slug}/report`
   returns the 5 pilot numbers (`joined, seated, left_without_seat, no_show,
   avg_wait_minutes`) scoped to the **UTC day** (no per-restaurant TZ in the pilot).
+- Guest self-service "Ya no voy" (T8, D38): `POST /tickets/{id}/no-show` → NO_SHOW
+  (guest-leave is NOT CANCELLED — that's a host action). Reuses the same transition
+  matrix; a guest "knows" a ticket by its unguessable UUID id.
 - Client polling must be short polling (5–8 s), not websockets/SSE (D2).
 
 ## Conventions

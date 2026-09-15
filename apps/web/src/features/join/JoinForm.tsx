@@ -7,6 +7,7 @@ import { joinQueue } from '../../api/guest'
 import { Button } from '../../components/Button'
 import { Field } from '../../components/Field'
 import { PhoneField, countryCodeForSlug } from '../../components/PhoneField'
+import { saveSavedTicket } from '../ticket/ticketStorage'
 import { joinSchema, type JoinForm } from './joinSchema'
 
 interface JoinFormProps {
@@ -39,6 +40,9 @@ export function JoinForm({ slug }: JoinFormProps) {
         phone_number: `${defaultCountryCode}${values.phone}`,
         party_size: values.party_size,
       })
+      // El turno queda en "Tus turnos" (localStorage, TTL 8 h) aunque cierre
+      // el navegador; la ruta del turno lo limpia al llegar a un estado terminal.
+      saveSavedTicket(ticket.id)
       navigate({ to: '/tickets/$id', params: { id: ticket.id } })
     } catch (error) {
       setFormError(

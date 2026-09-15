@@ -39,7 +39,9 @@ Vientos en Lima; Casa Mediterránea en Santiago) en **3 semanas**:
 - **Comensal — Unirse**: formulario vía QR/slug (`/join/{slug}`) con nombre,
   teléfono y comensales. Devuelve ticket + posición.
 - **Comensal — Tu turno**: posición en vivo (baja al avanzar), tiempo
-  estimado, botón "Ya no voy".
+  estimado, botón "Ya no voy". El turno queda guardado en el navegador (8 h
+  desde el join): al volver a abrir la app, "Tus turnos" muestra los turnos
+  vivos en cards y se limpian al sentarse o cancelar.
 - **Comensal — Llamado**: aviso prominente in-app cuando la mesa está lista
   (reemplazo del WhatsApp para el piloto) con botones "Voy en camino" /
   "Ya no voy".
