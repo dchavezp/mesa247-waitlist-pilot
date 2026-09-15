@@ -89,6 +89,10 @@ pnpm add -D <pkg>     # dev dep
   active ids → 409 otherwise (tablet resyncs on next poll). `GET /host/{slug}/report`
   returns the 5 pilot numbers (`joined, seated, left_without_seat, no_show,
   avg_wait_minutes`) scoped to the **UTC day** (no per-restaurant TZ in the pilot).
+  All `/host/*` routes except `POST /host/{slug}/login`, plus `PATCH /tickets/{id}`,
+  require `Authorization: Bearer <jwt>` from login (T15, D40): no/wrong/expired tokens
+  get 401, and a token only works for its own restaurant (`require_host_for` scopes
+  by slug; ticket transitions are scoped by the ticket's restaurant).
 - Guest self-service "Ya no voy" (T8, D38): `POST /tickets/{id}/no-show` → NO_SHOW
   (guest-leave is NOT CANCELLED — that's a host action). Reuses the same transition
   matrix; a guest "knows" a ticket by its unguessable UUID id.

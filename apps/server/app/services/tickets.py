@@ -19,13 +19,16 @@ SEATED_HISTORY_WINDOW = 10
 # mechanism instead.
 _join_lock = threading.Lock()
 
-# action -> (allowed source statuses, target status)
 TRANSITIONS: dict[str, tuple[tuple[QueueStatus, ...], QueueStatus]] = {
     "notify": ((QueueStatus.WAITING, QueueStatus.NOTIFIED), QueueStatus.NOTIFIED),
     "seat": ((QueueStatus.NOTIFIED,), QueueStatus.SEATED),
     "cancel": (ACTIVE_STATUSES, QueueStatus.CANCELLED),
     "no_show": (ACTIVE_STATUSES, QueueStatus.NO_SHOW),
 }
+
+
+class CrossRestaurantAccessError(Exception):
+    """The authenticated token does not cover the ticket's restaurant."""
 
 
 @dataclass
@@ -68,8 +71,6 @@ def join_queue(
     party_size: int,
 ) -> QueueEntry:
     with _join_lock:
-        # Counting and inserting must be atomic together, or two simultaneous
-        # joins can compute the same next position.
         entry = QueueEntry(
             restaurant_id=restaurant.id,
             customer_name=customer_name,
@@ -113,10 +114,17 @@ def get_host_queue(session: Session, restaurant: Restaurant) -> list[HostQueueIt
     ]
 
 
-def apply_transition(session: Session, ticket_id: str, action: str) -> TicketStatus | None:
+def apply_transition(
+    session: Session,
+    ticket_id: str,
+    action: str,
+    expected_restaurant_id: str | None = None,
+) -> TicketStatus | None:
     entry = session.get(QueueEntry, ticket_id)
     if entry is None:
         return None
+    if expected_restaurant_id is not None and entry.restaurant_id != expected_restaurant_id:
+        raise CrossRestaurantAccessError("El turno no pertenece al local autenticado")
     allowed_sources, target = TRANSITIONS[action]
     if entry.status not in allowed_sources:
         if action == "seat" and entry.status == QueueStatus.WAITING:
@@ -145,8 +153,6 @@ def reorder_queue(
 ) -> list[HostQueueItem]:
     active = _active_entries(session, restaurant.id)
     active_ids = {entry.id for entry in active}
-    # LWW: la tablet reenvía el orden completo; no hay merge ni contador de versión (D3).
-    # Sin arreglos automáticos: una lista inválida hace que la tablet resincronice en el próximo poll.
     if set(order) != active_ids or len(order) != len(active_ids):
         raise ValueError(
             "El orden enviado no coincide con los turnos activos; la tablet debe resincronizar"
@@ -159,8 +165,6 @@ def reorder_queue(
 
 
 def get_day_report(session: Session, restaurant: Restaurant) -> DayReport:
-    # Día en UTC, no en la TZ del local: el piloto no modela zonas horarias por local
-    # (simplificación del prototipo; reportes locales requieren timezone por restaurant).
     now_utc = _as_utc_naive(datetime.now(timezone.utc))
     day_start = now_utc.replace(hour=0, minute=0, second=0, microsecond=0)
     day_end = day_start + timedelta(days=1)

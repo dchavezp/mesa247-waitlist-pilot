@@ -35,7 +35,7 @@
   - `pin_code` en `Restaurant` guardado como **hash** (nunca texto plano); seed con PIN por local.
   - `POST /host/{slug}/login` → valida PIN → JWT de sesión corta (secreto + expiración en config, dev default).
 
-- [ ] **T15. Proteger rutas anfitrión + tests de auth**
+- [x] **T15. Proteger rutas anfitrión + tests de auth**
   - Dependency `require_host` (Bearer JWT) en `/host/*` y en `PATCH /tickets/{id}` → 401 sin/mal token.
   - Tests pytest: PIN incorrecto → 401, sin token → 401, token válido → 200, acciones de host sin auth rechazadas.
 

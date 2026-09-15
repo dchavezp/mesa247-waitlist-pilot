@@ -4,12 +4,14 @@ from sqlmodel import Session
 from ...core.db import get_session
 from ...services.auth import create_access_token, verify_pin
 from ...services.tickets import (
+    CrossRestaurantAccessError,
     apply_transition,
     get_day_report,
     get_host_queue,
     get_restaurant_by_slug,
     reorder_queue,
 )
+from ..deps import HostIdentity, require_host, require_host_for
 from ..schemas import (
     DayReportResponse,
     HostLoginRequest,
@@ -25,7 +27,9 @@ router = APIRouter(tags=["host"])
 
 @router.get("/host/{slug}/queue", response_model=list[HostQueueItem])
 def host_queue(
-    slug: str, session: Session = Depends(get_session)
+    slug: str,
+    _identity: HostIdentity = Depends(require_host_for),
+    session: Session = Depends(get_session),
 ) -> list[HostQueueItem]:
     restaurant = get_restaurant_by_slug(session, slug)
     if restaurant is None:
@@ -37,10 +41,15 @@ def host_queue(
 def update_ticket(
     ticket_id: str,
     payload: HostTransitionRequest,
+    identity: HostIdentity = Depends(require_host),
     session: Session = Depends(get_session),
 ) -> TicketStatusResponse:
     try:
-        status = apply_transition(session, ticket_id, payload.action)
+        status = apply_transition(
+            session, ticket_id, payload.action, expected_restaurant_id=identity.restaurant_id
+        )
+    except CrossRestaurantAccessError as e:
+        raise HTTPException(status_code=401, detail=str(e)) from e
     except ValueError as e:
         raise HTTPException(status_code=409, detail=str(e)) from e
     if status is None:
@@ -50,7 +59,10 @@ def update_ticket(
 
 @router.post("/host/{slug}/queue/reorder", response_model=list[HostQueueItem])
 def reorder(
-    slug: str, payload: ReorderRequest, session: Session = Depends(get_session)
+    slug: str,
+    payload: ReorderRequest,
+    _identity: HostIdentity = Depends(require_host_for),
+    session: Session = Depends(get_session),
 ) -> list[HostQueueItem]:
     restaurant = get_restaurant_by_slug(session, slug)
     if restaurant is None:
@@ -64,7 +76,9 @@ def reorder(
 
 @router.get("/host/{slug}/report", response_model=DayReportResponse)
 def day_report(
-    slug: str, session: Session = Depends(get_session)
+    slug: str,
+    _identity: HostIdentity = Depends(require_host_for),
+    session: Session = Depends(get_session),
 ) -> DayReportResponse:
     restaurant = get_restaurant_by_slug(session, slug)
     if restaurant is None:

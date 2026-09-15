@@ -11,9 +11,27 @@ def join(client, slug, name, party_size=2):
     return response.json()
 
 
+def login(client, slug, pin="1111"):
+    response = client.post(f"/host/{slug}/login", json={"pin": pin})
+    assert response.status_code == 200
+    return response.json()["access_token"]
+
+
+def auth_headers(client, slug, pin="1111"):
+    return {"Authorization": f"Bearer {login(client, slug, pin)}"}
+
+
 def test_pilot_restaurants_are_seeded(seed_restaurants, client):
+    pins = {
+        "la-terraza-azul-pe": "1111",
+        "cuatro-vientos-pe": "2222",
+        "casa-mediterranea-cl": "3333",
+    }
     for slug in ("la-terraza-azul-pe", "cuatro-vientos-pe", "casa-mediterranea-cl"):
-        assert client.get(f"/host/{slug}/queue").status_code == 200
+        assert (
+            client.get(f"/host/{slug}/queue", headers=auth_headers(client, slug, pins[slug])).status_code
+            == 200
+        )
 
 
 def test_join_assigns_contiguous_positions(client, make_restaurant):
@@ -78,15 +96,16 @@ def test_guest_no_show_leaves_the_queue(client, make_restaurant):
     status = client.get(f"/tickets/{second['id']}").json()
     assert status["position"] == 1
 
-    queue = client.get(f"/host/{slug}/queue").json()
+    queue = client.get(f"/host/{slug}/queue", headers=auth_headers(client, slug)).json()
     assert [item["id"] for item in queue] == [second["id"]]
 
 
 def test_guest_no_show_on_terminal_ticket_returns_409(client, make_restaurant):
     slug = make_restaurant().slug
+    headers = auth_headers(client, slug)
     seated_id = join(client, slug, "Ana")["id"]
-    client.patch(f"/tickets/{seated_id}", json={"action": "notify"})
-    client.patch(f"/tickets/{seated_id}", json={"action": "seat"})
+    client.patch(f"/tickets/{seated_id}", json={"action": "notify"}, headers=headers)
+    client.patch(f"/tickets/{seated_id}", json={"action": "seat"}, headers=headers)
 
     assert client.post(f"/tickets/{seated_id}/no-show").status_code == 409
 

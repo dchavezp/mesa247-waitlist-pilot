@@ -41,3 +41,13 @@ def create_access_token(restaurant: Restaurant) -> tuple[str, int]:
     }
     token = jwt.encode(payload, settings.jwt_secret, algorithm="HS256")
     return token, expires_in
+
+
+def decode_access_token(token: str) -> dict | None:
+    try:
+        payload = jwt.decode(token, settings.jwt_secret, algorithms=["HS256"])
+    except jwt.InvalidTokenError:
+        return None
+    if not isinstance(payload.get("sub"), str) or not isinstance(payload.get("slug"), str):
+        return None
+    return payload
