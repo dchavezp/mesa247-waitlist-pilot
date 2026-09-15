@@ -14,6 +14,9 @@ class Settings(BaseSettings):
     cors_origins: list[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
     # D20: per-group wait fallback while the restaurant has no seating history yet.
     default_minutes_per_group: int = 5
+    # Defaults de dev: en producción JWT_SECRET/JWT_EXPIRE_MINUTES van en .env (D33).
+    jwt_secret: str = "dev-secret-mesa247-cambiar-en-produccion"
+    jwt_expire_minutes: int = 60
 
 
 settings = Settings()

@@ -48,7 +48,7 @@ TABLE restaurants (
     id VARCHAR(36) PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     slug VARCHAR(50) UNIQUE NOT NULL,
-    pin_hash VARCHAR(100) NOT NULL, -- hash del PIN del local (D33), nunca texto plano
+    pin_hash VARCHAR(120) NOT NULL,
     country_code VARCHAR(5) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

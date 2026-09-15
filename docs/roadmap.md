@@ -31,7 +31,7 @@
   - Transiciones válidas/inválidas (no sentar un ticket que no fue llamado).
   - Concurrencia: dos joins simultáneos no comparten posición.
 
-- [ ] **T14. Auth PIN: modelo + login JWT** (la deuda D31 entra al piloto — D33)
+- [x] **T14. Auth PIN: modelo + login JWT** (la deuda D31 entra al piloto — D33)
   - `pin_code` en `Restaurant` guardado como **hash** (nunca texto plano); seed con PIN por local.
   - `POST /host/{slug}/login` → valida PIN → JWT de sesión corta (secreto + expiración en config, dev default).
 

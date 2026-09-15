@@ -1,9 +1,8 @@
-"""Rutas del anfitrión: cola en vivo, transiciones de turnos y reporte del día."""
-
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session
 
 from ...core.db import get_session
+from ...services.auth import create_access_token, verify_pin
 from ...services.tickets import (
     apply_transition,
     get_day_report,
@@ -13,6 +12,8 @@ from ...services.tickets import (
 )
 from ..schemas import (
     DayReportResponse,
+    HostLoginRequest,
+    HostLoginResponse,
     HostQueueItem,
     HostTransitionRequest,
     ReorderRequest,
@@ -69,3 +70,16 @@ def day_report(
     if restaurant is None:
         raise HTTPException(status_code=404, detail="Local no encontrado")
     return DayReportResponse.model_validate(get_day_report(session, restaurant))
+
+
+@router.post("/host/{slug}/login", response_model=HostLoginResponse)
+def host_login(
+    slug: str, payload: HostLoginRequest, session: Session = Depends(get_session)
+) -> HostLoginResponse:
+    restaurant = get_restaurant_by_slug(session, slug)
+    if restaurant is None:
+        raise HTTPException(status_code=404, detail="Local no encontrado")
+    if not verify_pin(payload.pin, restaurant.pin_code_hash):
+        raise HTTPException(status_code=401, detail="PIN incorrecto")
+    token, expires_in = create_access_token(restaurant)
+    return HostLoginResponse(access_token=token, expires_in=expires_in)

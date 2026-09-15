@@ -6,10 +6,6 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session
 
-# Redirect the engine to a throwaway SQLite file BEFORE app.core.config is
-# imported: Settings reads DATABASE_URL at import time and core/db.py builds
-# the engine from it exactly once. Env vars outrank .env, so tests can never
-# open the real mesa247.db.
 _test_dir = tempfile.mkdtemp(prefix="mesa247-tests-")
 os.environ["DATABASE_URL"] = f"sqlite:///{_test_dir}/test.db"
 
@@ -17,6 +13,7 @@ from app.core.db import engine  # noqa: E402
 from app.main import create_app  # noqa: E402
 from app.models import Restaurant  # noqa: E402
 from app.seed import seed  # noqa: E402
+from app.services.auth import hash_pin  # noqa: E402
 
 
 @pytest.fixture
@@ -44,6 +41,7 @@ def make_restaurant():
                 name=name,
                 slug=f"test-{uuid4().hex[:12]}",
                 country_code=country_code,
+                pin_code_hash=hash_pin("1111"),
             )
             session.add(restaurant)
             session.commit()

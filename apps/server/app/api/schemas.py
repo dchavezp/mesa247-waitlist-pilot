@@ -54,3 +54,13 @@ class DayReportResponse(BaseModel):
     left_without_seat: int
     no_show: int
     avg_wait_minutes: int
+
+
+class HostLoginRequest(BaseModel):
+    pin: str = Field(min_length=4, max_length=6, pattern=r"^\d+$")
+
+
+class HostLoginResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    expires_in: int

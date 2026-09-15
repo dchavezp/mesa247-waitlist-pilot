@@ -18,6 +18,7 @@ class Restaurant(SQLModel, table=True):
     name: str = Field(max_length=100)
     slug: str = Field(unique=True, index=True, max_length=50)
     country_code: str = Field(max_length=5)
+    pin_code_hash: str = Field(max_length=120)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     entries: list["QueueEntry"] = Relationship(back_populates="restaurant")
