@@ -1,31 +1,54 @@
 @import "tailwindcss";
 
 @theme {
-  --color-surface: oklch(0.985 0.006 75);
-  --color-surface-raised: oklch(0.995 0.004 75);
-  --color-ink: oklch(0.26 0.018 60);
-  --color-ink-muted: oklch(0.5 0.022 60);
-  --color-line: oklch(0.9 0.01 75);
+  /* Dark warm-neutral world (surface brief 2026-09-15): the guest flow is one
+     physical object — a card that becomes a boarding pass. Warm hue 60–80
+     keeps the dark from turning blue-gray; the amber accent is food warmth,
+     spent only on the primary action and the NOTIFIED moment. */
+  --color-surface: oklch(0.22 0.012 60);
+  --color-surface-raised: oklch(0.27 0.015 60);
+  --color-ink: oklch(0.95 0.01 80);
+  --color-ink-muted: oklch(0.7 0.02 70);
+  --color-line: oklch(0.35 0.016 65);
 
-  --color-brand: oklch(0.48 0.12 40);
-  --color-brand-strong: oklch(0.42 0.12 40);
-  --color-brand-soft: oklch(0.94 0.025 40);
-  --color-on-brand: oklch(0.985 0.006 75);
+  --color-brand: oklch(0.72 0.135 70);
+  --color-brand-strong: oklch(0.66 0.135 70);
+  --color-brand-soft: oklch(0.3 0.03 70);
+  --color-on-brand: oklch(0.21 0.012 60);
 
-  --color-success: oklch(0.48 0.1 150);
-  --color-success-soft: oklch(0.95 0.03 150);
-  --color-warning: oklch(0.52 0.12 70);
-  --color-warning-soft: oklch(0.95 0.04 80);
-  --color-danger: oklch(0.52 0.14 25);
-  --color-danger-soft: oklch(0.96 0.02 25);
+  --color-success: oklch(0.72 0.11 150);
+  --color-success-soft: oklch(0.29 0.035 150);
+  --color-warning: oklch(0.72 0.12 80);
+  --color-warning-soft: oklch(0.31 0.03 80);
+  --color-danger: oklch(0.72 0.15 25);
+  --color-danger-soft: oklch(0.28 0.045 25);
 
   /* No webfont (PRD §4.3): the guest is on mobile data at the door. */
   --font-sans:
     ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
 
+  /* Dark elevation: tight contact shadow + one wide soft shadow in warm
+     black. Offsets carry the depth; nothing is a halo. */
   --shadow-card:
-    0 1px 2px oklch(0.2 0.02 60 / 0.06), 0 4px 12px oklch(0.2 0.02 60 / 0.05);
+    0 1px 2px oklch(0.1 0.015 60 / 0.4),
+    0 12px 32px oklch(0.06 0.01 60 / 0.45);
+
+  /* The ONE authored motion moment: the ticket card warms up when the host
+     calls the table — gentle scale + fade, exponential ease-out, disabled
+     under prefers-reduced-motion. */
+  --animate-ticket-warm: ticket-warm 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+
+  @keyframes ticket-warm {
+    from {
+      opacity: 0.55;
+      transform: scale(0.985);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
 }
 
 @layer base {
@@ -35,5 +58,26 @@
   }
   .root {
     isolation: isolate;
+  }
+
+  /* Browser surfaces we did not draw: native chrome, text selection and the
+     caret carry the palette too instead of shipping OS defaults. */
+  :root {
+    color-scheme: dark;
+  }
+  ::selection {
+    background-color: var(--color-brand);
+    color: var(--color-on-brand);
+  }
+  input,
+  select,
+  textarea {
+    caret-color: var(--color-brand);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-ticket-warm {
+      animation: none;
+    }
   }
 }

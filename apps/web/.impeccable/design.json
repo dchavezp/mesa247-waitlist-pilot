@@ -1,0 +1,397 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-15T00:00:00Z",
+  "title": "Design System: Mesa247",
+  "extensions": {
+    "colorMeta": {
+      "surface": {
+        "role": "neutral",
+        "displayName": "Warm Ground",
+        "canonical": "oklch(0.22 0.012 60)",
+        "tonalRamp": [
+          "oklch(0.15 0.012 60)",
+          "oklch(0.25 0.012 60)",
+          "oklch(0.35 0.012 60)",
+          "oklch(0.45 0.012 60)",
+          "oklch(0.55 0.012 60)",
+          "oklch(0.65 0.012 60)",
+          "oklch(0.8 0.012 60)",
+          "oklch(0.95 0.012 60)"
+        ]
+      },
+      "surface-raised": {
+        "role": "neutral",
+        "displayName": "Raised Warm Ground",
+        "canonical": "oklch(0.27 0.015 60)",
+        "tonalRamp": [
+          "oklch(0.15 0.015 60)",
+          "oklch(0.25 0.015 60)",
+          "oklch(0.35 0.015 60)",
+          "oklch(0.45 0.015 60)",
+          "oklch(0.55 0.015 60)",
+          "oklch(0.65 0.015 60)",
+          "oklch(0.8 0.015 60)",
+          "oklch(0.95 0.015 60)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Warm White Ink",
+        "canonical": "oklch(0.95 0.01 80)",
+        "tonalRamp": [
+          "oklch(0.15 0.01 80)",
+          "oklch(0.25 0.01 80)",
+          "oklch(0.35 0.01 80)",
+          "oklch(0.45 0.01 80)",
+          "oklch(0.55 0.01 80)",
+          "oklch(0.65 0.01 80)",
+          "oklch(0.8 0.01 80)",
+          "oklch(0.95 0.01 80)"
+        ]
+      },
+      "ink-muted": {
+        "role": "neutral",
+        "displayName": "Muted Warm Ink",
+        "canonical": "oklch(0.7 0.02 70)",
+        "tonalRamp": [
+          "oklch(0.15 0.02 70)",
+          "oklch(0.25 0.02 70)",
+          "oklch(0.35 0.02 70)",
+          "oklch(0.45 0.02 70)",
+          "oklch(0.55 0.02 70)",
+          "oklch(0.65 0.02 70)",
+          "oklch(0.8 0.02 70)",
+          "oklch(0.95 0.02 70)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Warm Hairline",
+        "canonical": "oklch(0.35 0.016 65)",
+        "tonalRamp": [
+          "oklch(0.15 0.016 65)",
+          "oklch(0.25 0.016 65)",
+          "oklch(0.35 0.016 65)",
+          "oklch(0.45 0.016 65)",
+          "oklch(0.55 0.016 65)",
+          "oklch(0.65 0.016 65)",
+          "oklch(0.8 0.016 65)",
+          "oklch(0.95 0.016 65)"
+        ]
+      },
+      "brand": {
+        "role": "primary",
+        "displayName": "The Warm Amber",
+        "canonical": "oklch(0.72 0.135 70)",
+        "tonalRamp": [
+          "oklch(0.15 0.135 70)",
+          "oklch(0.25 0.135 70)",
+          "oklch(0.35 0.135 70)",
+          "oklch(0.45 0.135 70)",
+          "oklch(0.55 0.135 70)",
+          "oklch(0.65 0.135 70)",
+          "oklch(0.8 0.135 70)",
+          "oklch(0.95 0.135 70)"
+        ]
+      },
+      "brand-strong": {
+        "role": "primary",
+        "displayName": "The Deep Amber",
+        "canonical": "oklch(0.66 0.135 70)",
+        "tonalRamp": [
+          "oklch(0.15 0.135 70)",
+          "oklch(0.25 0.135 70)",
+          "oklch(0.35 0.135 70)",
+          "oklch(0.45 0.135 70)",
+          "oklch(0.55 0.135 70)",
+          "oklch(0.65 0.135 70)",
+          "oklch(0.8 0.135 70)",
+          "oklch(0.95 0.135 70)"
+        ]
+      },
+      "brand-soft": {
+        "role": "primary",
+        "displayName": "The Ember Ground",
+        "canonical": "oklch(0.3 0.03 70)",
+        "tonalRamp": [
+          "oklch(0.15 0.03 70)",
+          "oklch(0.25 0.03 70)",
+          "oklch(0.35 0.03 70)",
+          "oklch(0.45 0.03 70)",
+          "oklch(0.55 0.03 70)",
+          "oklch(0.65 0.03 70)",
+          "oklch(0.8 0.03 70)",
+          "oklch(0.95 0.03 70)"
+        ]
+      },
+      "on-brand": {
+        "role": "primary",
+        "displayName": "The Ink-on-Amber",
+        "canonical": "oklch(0.21 0.012 60)",
+        "tonalRamp": [
+          "oklch(0.15 0.012 60)",
+          "oklch(0.25 0.012 60)",
+          "oklch(0.35 0.012 60)",
+          "oklch(0.45 0.012 60)",
+          "oklch(0.55 0.012 60)",
+          "oklch(0.65 0.012 60)",
+          "oklch(0.8 0.012 60)",
+          "oklch(0.95 0.012 60)"
+        ]
+      },
+      "success": {
+        "role": "success",
+        "displayName": "Warm Green",
+        "canonical": "oklch(0.72 0.11 150)",
+        "tonalRamp": [
+          "oklch(0.15 0.11 150)",
+          "oklch(0.25 0.11 150)",
+          "oklch(0.35 0.11 150)",
+          "oklch(0.45 0.11 150)",
+          "oklch(0.55 0.11 150)",
+          "oklch(0.65 0.11 150)",
+          "oklch(0.8 0.11 150)",
+          "oklch(0.95 0.11 150)"
+        ]
+      },
+      "success-soft": {
+        "role": "success",
+        "displayName": "Warm Green Ground",
+        "canonical": "oklch(0.29 0.035 150)",
+        "tonalRamp": [
+          "oklch(0.15 0.035 150)",
+          "oklch(0.25 0.035 150)",
+          "oklch(0.35 0.035 150)",
+          "oklch(0.45 0.035 150)",
+          "oklch(0.55 0.035 150)",
+          "oklch(0.65 0.035 150)",
+          "oklch(0.8 0.035 150)",
+          "oklch(0.95 0.035 150)"
+        ]
+      },
+      "warning": {
+        "role": "warning",
+        "displayName": "Warm Gold",
+        "canonical": "oklch(0.72 0.12 80)",
+        "tonalRamp": [
+          "oklch(0.15 0.12 80)",
+          "oklch(0.25 0.12 80)",
+          "oklch(0.35 0.12 80)",
+          "oklch(0.45 0.12 80)",
+          "oklch(0.55 0.12 80)",
+          "oklch(0.65 0.12 80)",
+          "oklch(0.8 0.12 80)",
+          "oklch(0.95 0.12 80)"
+        ]
+      },
+      "warning-soft": {
+        "role": "warning",
+        "displayName": "Warm Gold Ground",
+        "canonical": "oklch(0.31 0.03 80)",
+        "tonalRamp": [
+          "oklch(0.15 0.03 80)",
+          "oklch(0.25 0.03 80)",
+          "oklch(0.35 0.03 80)",
+          "oklch(0.45 0.03 80)",
+          "oklch(0.55 0.03 80)",
+          "oklch(0.65 0.03 80)",
+          "oklch(0.8 0.03 80)",
+          "oklch(0.95 0.03 80)"
+        ]
+      },
+      "danger": {
+        "role": "danger",
+        "displayName": "Warm Red",
+        "canonical": "oklch(0.72 0.15 25)",
+        "tonalRamp": [
+          "oklch(0.15 0.15 25)",
+          "oklch(0.25 0.15 25)",
+          "oklch(0.35 0.15 25)",
+          "oklch(0.45 0.15 25)",
+          "oklch(0.55 0.15 25)",
+          "oklch(0.65 0.15 25)",
+          "oklch(0.8 0.15 25)",
+          "oklch(0.95 0.15 25)"
+        ]
+      },
+      "danger-soft": {
+        "role": "danger",
+        "displayName": "Warm Red Ground",
+        "canonical": "oklch(0.28 0.045 25)",
+        "tonalRamp": [
+          "oklch(0.15 0.045 25)",
+          "oklch(0.25 0.045 25)",
+          "oklch(0.35 0.045 25)",
+          "oklch(0.45 0.045 25)",
+          "oklch(0.55 0.045 25)",
+          "oklch(0.65 0.045 25)",
+          "oklch(0.8 0.045 25)",
+          "oklch(0.95 0.045 25)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The giant live turn number (5.5rem), WAITING and NOTIFIED only."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Card titles and status headlines (1.5rem)."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Terminal-state and error headlines (1.25rem)."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Explanatory copy under headings (0.875rem)."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Field labels above inputs (0.875rem medium)."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Ticket footer meta (0.75rem)."
+      }
+    },
+    "shadows": [
+      {
+        "name": "card",
+        "value": "0 1px 2px oklch(0.1 0.015 60 / 0.4), 0 12px 32px oklch(0.06 0.01 60 / 0.45)",
+        "purpose": "The single elevation token: tight contact shadow plus one wide soft warm-black shadow. Used on every card."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ticket-warm",
+        "value": "ticket-warm 0.7s cubic-bezier(0.16, 1, 0.3, 1) both",
+        "purpose": "The only authored animation. Plays once on the NOTIFIED turn ticket (opacity 0.55->1, scale 0.985->1); disabled under prefers-reduced-motion."
+      },
+      {
+        "name": "skeleton-pulse",
+        "value": "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "purpose": "Tailwind built-in pulse for the loading-ticket skeleton blocks; the system adds no other keyframes."
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The warm amber call to action — join the queue, retry, submit. Full-width in the guest flow.",
+      "html": "<button class=\"ds-btn-primary\" type=\"submit\">Unirse</button>",
+      "css": ".ds-btn-primary { background: oklch(0.72 0.135 70); color: oklch(0.21 0.012 60); border: 1px solid transparent; border-radius: 8px; padding: 8px 16px; font-family: ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; font-size: 0.875rem; font-weight: 500; width: 100%; cursor: pointer; transition: background-color 0.15s ease; }\n.ds-btn-primary:hover { background: oklch(0.66 0.135 70); }\n.ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 2px oklch(0.22 0.012 60), 0 0 0 4px oklch(0.72 0.135 70); }\n.ds-btn-primary:disabled { opacity: 0.6; cursor: default; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Quiet raised-ground button with a hairline border that warms on hover — the host-surface counterpart.",
+      "html": "<button class=\"ds-btn-secondary\" type=\"button\">Reintentar</button>",
+      "css": ".ds-btn-secondary { background: oklch(0.27 0.015 60); color: oklch(0.95 0.01 80); border: 1px solid oklch(0.35 0.016 65); border-radius: 8px; padding: 8px 16px; font-family: ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: border-color 0.15s ease, background-color 0.15s ease; }\n.ds-btn-secondary:hover { border-color: oklch(0.66 0.135 70); }\n.ds-btn-secondary:focus-visible { outline: none; box-shadow: 0 0 0 2px oklch(0.22 0.012 60), 0 0 0 4px oklch(0.72 0.135 70); }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "field-input",
+      "description": "Label above, hairline-bordered dark input with amber focus ring and inline error text.",
+      "html": "<div class=\"ds-field\"><label class=\"ds-field-label\" for=\"ds-name\">Nombre</label><input class=\"ds-field-input\" id=\"ds-name\" placeholder=\"Tu nombre\" /><p class=\"ds-field-error\">Ingresa tu nombre</p></div>",
+      "css": ".ds-field-label { display: block; margin-bottom: 4px; font-family: ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; font-size: 0.875rem; font-weight: 500; color: oklch(0.95 0.01 80); }\n.ds-field-input { width: 100%; box-sizing: border-box; background: oklch(0.22 0.012 60); color: oklch(0.95 0.01 80); border: 1px solid oklch(0.35 0.016 65); border-radius: 8px; padding: 8px 12px; font-family: ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; font-size: 0.875rem; }\n.ds-field-input::placeholder { color: oklch(0.7 0.02 70); }\n.ds-field-input:focus { outline: none; border-color: oklch(0.72 0.135 70); }\n.ds-field-input:focus-visible { outline: none; box-shadow: 0 0 0 2px oklch(0.22 0.012 60), 0 0 0 4px oklch(0.72 0.135 70); }\n.ds-field-error { margin-top: 4px; font-family: ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; font-size: 0.875rem; color: oklch(0.72 0.15 25); }"
+    },
+    {
+      "name": "Phone Input Group",
+      "kind": "input",
+      "refersTo": "field-input",
+      "description": "Single-ticket phone field: fixed country prefix in a bordered addon sharing one group border with the input.",
+      "html": "<div class=\"ds-phone\"><label class=\"ds-field-label\" for=\"ds-phone\">Teléfono</label><div class=\"ds-phone-group\"><span class=\"ds-phone-addon\">+51</span><input class=\"ds-phone-input\" id=\"ds-phone\" type=\"tel\" placeholder=\"Tu teléfono\" /></div></div>",
+      "css": ".ds-field-label { display: block; margin-bottom: 4px; font-family: ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; font-size: 0.875rem; font-weight: 500; color: oklch(0.95 0.01 80); }\n.ds-phone-group { display: flex; align-items: center; background: oklch(0.22 0.012 60); border: 1px solid oklch(0.35 0.016 65); border-radius: 8px; transition: border-color 0.15s ease; }\n.ds-phone-group:focus-within { border-color: oklch(0.72 0.135 70); }\n.ds-phone-group[data-invalid=\"true\"] { border-color: oklch(0.72 0.15 25); }\n.ds-phone-addon { flex: none; border-right: 1px solid oklch(0.35 0.016 65); padding: 8px 12px; font-family: ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; font-size: 0.875rem; color: oklch(0.7 0.02 70); }\n.ds-phone-input { flex: 1; min-width: 0; background: transparent; color: oklch(0.95 0.01 80); border: none; padding: 8px 12px; font-family: ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; font-size: 0.875rem; }\n.ds-phone-input::placeholder { color: oklch(0.7 0.02 70); }\n.ds-phone-input:focus { outline: none; }"
+    },
+    {
+      "name": "Join Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "The stub of the boarding pass: heading, dashed tear line, then the form body on one raised surface.",
+      "html": "<section class=\"ds-card\"><header class=\"ds-card-head\"><h1 class=\"ds-card-title\">Únete a la fila</h1><p class=\"ds-card-sub\">Completa tus datos para ingresar a la fila virtual.</p></header><div class=\"ds-tear\" aria-hidden=\"true\"></div><div class=\"ds-card-body\"><button class=\"ds-btn-primary\" type=\"submit\">Unirse</button></div></section>",
+      "css": ".ds-card { background: oklch(0.27 0.015 60); border: 1px solid oklch(0.35 0.016 65); border-radius: 16px; box-shadow: 0 1px 2px oklch(0.1 0.015 60 / 0.4), 0 12px 32px oklch(0.06 0.01 60 / 0.45); max-width: 384px; }\n.ds-card-head { padding: 24px 24px 0; }\n.ds-card-title { margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; font-size: 1.5rem; font-weight: 600; letter-spacing: -0.025em; color: oklch(0.95 0.01 80); }\n.ds-card-sub { margin: 6px 0 0; font-family: ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; font-size: 0.875rem; color: oklch(0.7 0.02 70); }\n.ds-tear { margin: 20px 24px 0; border-top: 1px dashed oklch(0.35 0.016 65); }\n.ds-card-body { padding: 20px 24px 24px; display: flex; flex-direction: column; gap: 20px; }"
+    },
+    {
+      "name": "Turn Ticket — Waiting",
+      "kind": "custom",
+      "refersTo": "card",
+      "description": "The boarding pass at rest: giant live turn number, status line, ETA, tear line, footer.",
+      "html": "<section class=\"ds-ticket\" aria-label=\"Tu turno\"><div class=\"ds-ticket-body\" role=\"status\"><p class=\"ds-ticket-number\">42</p><h1 class=\"ds-ticket-status\">Esperas en la posición 42</h1><p class=\"ds-ticket-eta\">~15 min restantes</p></div><div class=\"ds-tear\" aria-hidden=\"true\"></div><footer class=\"ds-ticket-foot\"><span>Fila virtual</span><span>Mesa247</span></footer></section>",
+      "css": ".ds-ticket { background: oklch(0.27 0.015 60); border: 1px solid oklch(0.35 0.016 65); border-radius: 16px; box-shadow: 0 1px 2px oklch(0.1 0.015 60 / 0.4), 0 12px 32px oklch(0.06 0.01 60 / 0.45); max-width: 384px; }\n.ds-ticket-body { text-align: center; padding: 32px 24px 8px; }\n.ds-ticket-number { margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; font-size: 5.5rem; font-weight: 600; line-height: 1; letter-spacing: -0.025em; color: oklch(0.95 0.01 80); }\n.ds-ticket-status { margin: 24px 0 0; font-family: ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; font-size: 1.125rem; font-weight: 500; color: oklch(0.95 0.01 80); }\n.ds-ticket-eta { margin: 4px 0 0; font-family: ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; font-size: 0.875rem; color: oklch(0.7 0.02 70); }\n.ds-tear { margin: 24px; border-top: 1px dashed oklch(0.35 0.016 65); }\n.ds-ticket-foot { display: flex; justify-content: space-between; padding: 0 24px 24px; font-family: ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; font-size: 0.75rem; color: oklch(0.7 0.02 70); }"
+    },
+    {
+      "name": "Turn Ticket — Called (NOTIFIED)",
+      "kind": "custom",
+      "refersTo": "card",
+      "description": "The hero moment: the ticket warms — amber border, warm-up animation, amber headline telling the guest the table is ready.",
+      "html": "<section class=\"ds-ticket ds-ticket-notified\" aria-label=\"Tu turno\"><div class=\"ds-ticket-body\" role=\"status\"><p class=\"ds-ticket-number\">42</p><h1 class=\"ds-ticket-call\">¡Tu mesa está lista!</h1><p class=\"ds-ticket-eta\">Acércate a la recepción y te ubicamos en tu mesa.</p></div><div class=\"ds-tear\" aria-hidden=\"true\"></div><footer class=\"ds-ticket-foot\"><span>Fila virtual</span><span>Mesa247</span></footer></section>",
+      "css": ".ds-ticket { background: oklch(0.27 0.015 60); border: 1px solid oklch(0.35 0.016 65); border-radius: 16px; box-shadow: 0 1px 2px oklch(0.1 0.015 60 / 0.4), 0 12px 32px oklch(0.06 0.01 60 / 0.45); max-width: 384px; }\n.ds-ticket-notified { border-color: oklch(0.72 0.135 70); animation: ds-ticket-warm 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }\n@keyframes ds-ticket-warm { from { opacity: 0.55; transform: scale(0.985); } to { opacity: 1; transform: scale(1); } }\n.ds-ticket-body { text-align: center; padding: 32px 24px 8px; }\n.ds-ticket-number { margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; font-size: 5.5rem; font-weight: 600; line-height: 1; letter-spacing: -0.025em; color: oklch(0.95 0.01 80); }\n.ds-ticket-call { margin: 24px 0 0; font-family: ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; font-size: 1.5rem; font-weight: 600; color: oklch(0.72 0.135 70); }\n.ds-ticket-eta { margin: 6px 0 0; font-family: ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; font-size: 0.875rem; color: oklch(0.7 0.02 70); }\n.ds-tear { margin: 24px; border-top: 1px dashed oklch(0.35 0.016 65); }\n.ds-ticket-foot { display: flex; justify-content: space-between; padding: 0 24px 24px; font-family: ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; font-size: 0.75rem; color: oklch(0.7 0.02 70); }\n@media (prefers-reduced-motion: reduce) { .ds-ticket-notified { animation: none; } }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Boarding Pass",
+    "overview": "The guest flow owns the wait as a calm, confident ticket: one dark operating surface where join and turn are the same physical object — a card that becomes a boarding pass the moment it is issued. A walk-in guest scans the QR at the door, joins in under ten seconds, and from that moment holds a ticket that always tells the truth: your number, your place, how long until the bell. When the host calls them, the ticket itself warms up and says it.\n\nThe system is the canon of the category played straight (craft bar: Toast POS, airline boarding pass, Starbucks app, OpenTable/Resy): deep warm-neutral dark grounds that never tip blue-gray, one warm amber accent spent sparingly, 1px hairlines, gently rounded cards, a workhorse system sans, and exactly one authored motion moment. It refuses the generic light SaaS form and the glowing-nightlife dark cliché both — no gradient text, no glow, no neon, no webfont. Density is low and centered: every surface is one card per viewport, and the guest believes it within one viewport.",
+    "keyCharacteristics": [
+      "One physical object: the join card is the stub; the turn view is the boarding pass it becomes (same shell, same tear line, same max-w-sm column).",
+      "One warm accent, spent only on the primary action (\"Unirse\") and the NOTIFIED moment (\"¡Tu mesa está lista!\").",
+      "Warm-neutral dark grounds (hue 60–80) throughout; ink is a high-contrast warm white; status hues are desaturated to keep the board quiet.",
+      "Boarding-pass anatomy: a giant turn number, a dashed tear line, and a \"Fila virtual — Mesa247\" footer.",
+      "One two-layer contact-plus-ambient shadow per card, in warm black; everything else is flat.",
+      "Max one authored animation per surface, reduced-motion safe; system sans only; Spanish copy everywhere visible."
+    ],
+    "rules": [
+      {
+        "name": "The One Warm Accent Rule",
+        "body": "The amber is spent only on the primary action and the NOTIFIED moment. Any surface shows it on a handful of elements — primary button, focus rings, selection, and the called-ticket. Its rarity is the point; a second accent hue never enters the guest flow.",
+        "section": "colors"
+      },
+      {
+        "name": "The Warm Ground Rule",
+        "body": "Every neutral token carries hue 60–80. A dark surface that reads blue-gray (hue ~240) is off-world; if a new surface needs a darker or lighter ground, step lightness on the same warm hue, never borrow a cool neutral.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Sans Rule",
+        "body": "System stack only, everywhere. No webfont ever joins the guest flow; the Product Principle is mobile data at the door, and the stack is the entire type budget.",
+        "section": "typography"
+      },
+      {
+        "name": "The Giant Turn Number Rule",
+        "body": "The display grade belongs to the live position and nothing else. The moment the wait is over, the number demotes to 36px muted ink — the ticket stops claiming the stage once it has told the truth (terminal demotion is text-4xl at 2.25rem/36px, leading-none, text-ink-muted).",
+        "section": "typography"
+      },
+      {
+        "name": "The No-Glow Rule",
+        "body": "The shadow vocabulary is exactly one token. Nothing blooms: no colored shadows, no halos, no inset glows, no gradient surfaces. If a card needs more lift, it gets lightness, not light.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Single-Motion Rule",
+        "body": "One authored animation exists in the system: ticket-warm, and it plays only on the NOTIFIED moment. The reduced-motion media query kills it; new surfaces inherit the rule — no new keyframes without a motion guard.",
+        "section": "components"
+      }
+    ],
+    "dos": [
+      "Do keep every neutral on the warm hue band (60–80) — step lightness, never cool hue, when a surface needs darker or lighter.",
+      "Do spend the amber only on the primary action and the NOTIFIED moment; keep the rest of the card ink-on-warm-ground.",
+      "Do build every guest surface as ONE centered card (max-w-sm) with the dashed 1px tear line separating regions.",
+      "Do use the giant display grade only for the live turn number, and demote it (36px, muted) the moment the status turns terminal.",
+      "Do use the system sans stack at 400–600 weight and Spanish copy; keep every visible string in Spanish.",
+      "Do guard every authored animation with prefers-reduced-motion: reduce."
+    ],
+    "donts": [
+      "Don't use blue-gray dark surfaces, cool neutrals, or a cool accent — the world is warm ember, not nightlife.",
+      "Don't add gradients, glow, neon, blur, or a second shadow token; --shadow-card is the entire depth vocabulary.",
+      "Don't load a webfont, an icon font, or any asset the guest must pay for on mobile data.",
+      "Don't add a second accent hue to the guest flow; success is reserved for the SEATED moment, danger for errors.",
+      "Don't hardcode colors, radii, or spacing outside the @theme tokens in src/index.css; host and report surfaces inherit this system.",
+      "Don't add new authored keyframes without a reduced-motion guard; ticket-warm is the only authored motion moment."
+    ]
+  }
+}
