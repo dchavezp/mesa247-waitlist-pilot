@@ -31,6 +31,14 @@
   - Transiciones válidas/inválidas (no sentar un ticket que no fue llamado).
   - Concurrencia: dos joins simultáneos no comparten posición.
 
+- [ ] **T14. Auth PIN: modelo + login JWT** (la deuda D31 entra al piloto — D33)
+  - `pin_code` en `Restaurant` guardado como **hash** (nunca texto plano); seed con PIN por local.
+  - `POST /host/{slug}/login` → valida PIN → JWT de sesión corta (secreto + expiración en config, dev default).
+
+- [ ] **T15. Proteger rutas anfitrión + tests de auth**
+  - Dependency `require_host` (Bearer JWT) en `/host/*` y en `PATCH /tickets/{id}` → 401 sin/mal token.
+  - Tests pytest: PIN incorrecto → 401, sin token → 401, token válido → 200, acciones de host sin auth rechazadas.
+
 ## Fase 2 — Frontend
 
 - [x] **T6. Scaffold Vite + React + TS + Tailwind + TanStack Query + TanStack Router + React Hook Form**
@@ -44,7 +52,10 @@
   - Posición en vivo (baja al avanzar la cola), tiempo estimado, botón "Ya no voy",
     banner prominente cuando llega el llamado (reemplazo in-app del WhatsApp, D1).
 
-- [ ] **T9. Vista anfitrión** (`/host/:slug`)
+- [ ] **T16. Login tablet (PIN)**
+  - `/host/:slug` arranca con pantalla de PIN; token guardado y enviado como `Authorization` en `client.ts`; 401 → vuelve al login.
+
+- [ ] **T9. Vista anfitrión** (`/host/:slug`, detrás del login T16)
   - Cola en vivo, llamar/sentar/cancelar, priorizar (frecuente), modal con QR de la puerta.
 
 ## Fase 3 — Cierre y entrega
@@ -68,12 +79,10 @@
 
 ## Pendiente post-piloto (cortes deliberados)
 
-- [ ] **T14. Seguridad y acceso a la vista de anfitrión** (no se construye en el piloto)
-  - Hoy el acceso es por slug (`/host/{slug}`): **obscuridad, no seguridad** —
-    cualquiera con el link gestiona la cola (asumido en PRD §4.2: tablets
-    compartidas, confianza del local; ver D31).
-  - Pendiente para Fase 2: PIN por local, enlace de acceso con expiración o
-    login — a decidir cuando haya multi-local real.
+- El corte original T14 (host sin auth por slug) **ya no aplica**: la seguridad
+  por PIN entró al alcance del piloto (U17 → D33) como T14–T16.
+- Los demás cortes deliberados (WhatsApp, DnD pesado, admin de locales, reporte
+  por e-mail) viven en la nota técnica §2.
 
 ## Estimación (actualizada)
 
@@ -82,7 +91,9 @@
 | T1–T3 (setup + comensal) | ~1 h |
 | T4–T5 (anfitrión + tests) | ~1 h |
 | T6–T9 (frontend) | ~1 h 30 m |
+| T14–T16 (seguridad PIN) | ~30 m |
 | T10–T12 (cierre + verificación) | ~30 m |
 | T13 (entrega) | ~30 m |
 
-**Total: ~4 h** — consistente con la nota técnica.
+**Total: ~4 h 30 m** — la nota técnica ya contaba el auth por PIN dentro de sus
+4 h; el roadmap anterior lo subestimaba al omitir estas tareas.

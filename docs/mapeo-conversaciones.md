@@ -14,7 +14,7 @@ diseñador como única fuente. A partir de ahí trabajamos así:
 1. **Preguntas primero, código después**: definimos 4 forks de tecnología
    (BD local, polling del frontend, estilos, tests) antes de escribir una línea.
 2. **Roadmap por tareas**: rechacé hacer todo de una — cada batch se aprueba,
-   se implementa y se verifica de a uno (T1–T13, `docs/roadmap.md`).
+   se implementa y se verifica de a uno (T1–T16, `docs/roadmap.md`).
 3. **Documentación en el proyecto**: el decision log, el PRD, las convenciones
    y la arquitectura viven en `docs/` — nada queda solo en memoria del chat.
 4. **Estado actual**: T1–T6 completos y verificados (backend completo + tests verdes + frontend scaffolded); T7 (unirse) es lo próximo.
@@ -42,6 +42,7 @@ y convención la tomó la persona; la IA propuso y ejecutó según lo aprobado.
 | U14 | 2026-09-14 | "Hay que crear las variables para el theme de tailwindcss, puedes usar /impeccable para tener una idea" | Theme tokens en `@theme` (OKLCH, roles semánticos) — D30 |
 | U15 | 2026-09-14 | "Hay que poner como pendiente la seguridad y acceso para la vista de anfitrión" | Corte documentado: T14 pendiente post-piloto (D31), PRD §4.2/§7 alineados |
 | U16 | 2026-09-14 | "Hay que incluir base-ui, pnpm add @base-ui/react" | Primitivas headless al stack: **D32** (`@base-ui/react` 1.8.0) |
+| U17 | 2026-09-15 | "He actualizado la nota técnica para incluir seguridad por PIN; hay que definir nuevas tareas en el roadmap" | PIN por local entra al alcance del piloto (T14–T16): reemplaza el corte D31 (D33) |
 
 ## Partes del trabajo
 
@@ -98,6 +99,7 @@ y convención la tomó la persona; la IA propuso y ejecutó según lo aprobado.
 | D30 | 2026-09-14 | Frontend | **Theme tokens** en `@theme` (`apps/web/src/index.css`): roles semánticos en **OKLCH** — superficies (surface, surface-raised), texto (ink, ink-muted), bordes (line), acción (brand, brand-strong, brand-soft, on-brand), estados (success/warning/danger + variantes soft), `font-sans` de sistema (sin webfont) y `shadow-card`. Brand = **terracota** (hue 40) sobre neutros cálidos | U14; guía /impeccable (nuevas paletas en OKLCH, roles y no swatches, color = acción/estado no decoración); PRD §4.3 (comensal con datos móviles → nada de webfonts); parejas fg/bg chequeadas contra WCAG AA. El brand es **supuesto a validar con el diseñador** — cambiar el hue es una línea | azul SaaS genérico (sin significado para hospitalidad), monocromo puro (pierde jerarquía de estados), webfont (peso extra y FOUT en la puerta del local) |
 | D31 | 2026-09-14 | Roadmap/Producto | **Seguridad de host pendiente (T14)**: la vista `/host/{slug}` queda **sin autenticación** en el piloto — acceso por slug (obscuridad, no seguridad); el corte queda registrado como tarea pendiente post-piloto en el roadmap | U15; el brief evalúa "qué se cortó y por qué" → el corte debe estar escrito; PRD §4.2 ya asumía sin login (tablets compartidas, confianza del local) — ahora el roadmap nombra la deuda | PIN por local (simple pero se comparte entre staff), enlace con expiración (sin gestión de usuarios), login completo (ceremonia para un piloto de 3 locales) |
 | D32 | 2026-09-14 | Frontend | **Base UI** (`@base-ui/react` 1.8.0) al stack: primitivas *headless* (dialog, select, radio, etc.) con accesibilidad ARIA integrada y **cero estilos impuestos** — matiza D29 ("sin librerías UI"): sigue prohibido traer look de terceros, pero las primitivas de comportamiento entran; el estilo siempre lo definen componentes custom + tokens del `@theme` | U16 explícito; el modal QR del anfitrión (T9) y estados que cambian necesitan accesibilidad sin reinventar ARIA; encaja con la filosofía D29 (look propio) y con Tailwind v4 (sin runtime de estilos) | shadcn/ui (trae estilos + ceremonia de copiado, ya citado en D29), Radix UI (equivalente headless, pero el candidato eligió Base UI), MUI (estilos propios, rompería el tema) |
+| D33 | 2026-09-15 | Roadmap/Backend | **Seguridad de host entra al piloto (reemplaza el corte D31)**: PIN por local + JWT de sesión corta → T14–T16. `pin_code` en `Restaurant` guardado como **hash** (nunca texto plano); `POST /host/{slug}/login` valida el PIN y emite el token; dependency `require_host` (Bearer JWT) protege `/host/*` **y `PATCH /tickets/{id}`** — cierra el vector "un comensal altera la cola" que la nota §5.1 exige; el token se comparte entre staff del local pero expira y solo opera sobre el slug autenticado | La nota técnica actualizó el alcance del MVP (U17); el PIN hasheado evita que una fuga de la BD exponga credenciales; sin gestión de usuarios (3 locales, tablets compartidas) | Sin auth (obscuridad por slug, corte original D31), enlace con expiración, login completo con usuarios, PIN en texto plano en BD |
 
 ## Preguntas de tecnología al candidato (resueltas)
 

@@ -20,9 +20,10 @@
 ### 2. Alcance del Piloto: Qué se construye primero y qué se corta
 
 #### Construido primero (MVP Core - 4 horas):
-* **Comensal:** Formulario móvil de ingreso vía URL/QR (`Nombre`, `Teléfono`, `Comensales`). Roteo mediante `slug` del local (ej. `/join/la-terraza-azul-pe`).
+* **Comensal:** Formulario móvil de ingreso vía URL/QR (`Nombre`, `Teléfono`, `Comensales`). Roteo público mediante `slug` del local (ej. `/join/la-terraza-azul`).
 * **Comensal:** Vista de estado con puesto en vivo, animación de avance, alerta *in-app* de "Mesa Lista" y botones de respuesta (*"Voy en camino"* / *"Ya no voy"*).
-* **Anfitrión:** Vista de cola con cambio de estados (*Llamar*, *Sentar*, *Cancelar*) y modal para mostrar el código QR dinámico.
+* **Anfitrión:** Vista protegida de la cola con cambio de estados (*Llamar*, *Sentar*, *Cancelar*) y modal para mostrar el código QR dinámico.
+* **Seguridad & Acceso:** Autenticación liviana mediante PIN de local (`PIN Auth`) que emite un token JWT de sesión corta para la tablet del anfitrión.
 * **Infraestructura & Tooling:** API Stateless en FastAPI + React Frontend + MySQL. Gestión de entorno/paquetes con **`uv`** y ORM **SQLModel** para desacoplar y agilizar el desarrollo.
 
 #### Cortado / Postergado para Fase 2:
@@ -32,9 +33,9 @@
 * **Reporte nocturno automático por e-mail:** Postergado. El reporte se puede consultar en un endpoint básico o vista de cierre, pero no se construye el worker de envío masivo de correos.
 
 #### Estimación de tiempo (Desarrollo MVP):
-* **Diseño del modelo de datos, script de seed de locales y setup con `uv` + SQLModel:** 45 min
-* **Backend REST API en FastAPI (Endpoints comensal + anfitrión):** 1h 15 min
-* **Frontend React (Vistas Comensal, Anfitrión y QR Modal):** 1h 30 min
+* **Diseño del modelo de datos, script de seed de locales, auth por PIN y setup con `uv` + SQLModel:** 45 min
+* **Backend REST API en FastAPI (Endpoints comensal + endpoints protegidos de anfitrión):** 1h 15 min
+* **Frontend React (Vistas Comensal, Login/Tablet Anfitrión y QR Modal):** 1h 30 min
 * **Pruebas de flujo de punta a punta, README y documentación:** 30 min
 * **Total estimado:** 4 horas.
 
@@ -46,7 +47,8 @@
 TABLE restaurants (
     id VARCHAR(36) PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    slug VARCHAR(50) UNIQUE NOT NULL, -- D23: marca + país (ej. casa-mediterranea-cl), único global
+    slug VARCHAR(50) UNIQUE NOT NULL,
+    pin_hash VARCHAR(100) NOT NULL, -- hash del PIN del local (D33), nunca texto plano
     country_code VARCHAR(5) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -77,9 +79,9 @@ TABLE queue_entries (
 
 ---
 
-### 5. Decisiones que NO se van a poder cambiar después (Arquitectura & Contratos)
+### 5. Decisiones que NO se van a poder cambiar después (Arquitectura, Seguridad & Contratos)
 
-1. **Estructura Stateless del Backend:** Toda la lógica de negocio depende de la persistencia directa en Base de Datos (MySQL con driver PyMySQL), evitando mantener estado global o hilos de Python en memoria dentro del contenedor. Esto garantiza que la app pueda correr en Cloud Run y escalar a múltiples instancias sin causar inconsistencias entre clientes.
+1. **Estructura Stateless y Seguridad en el Backend:** Toda la lógica de negocio depende de la persistencia directa en Base de Datos (MySQL con driver PyMySQL), evitando mantener estado global o hilos de Python en memoria dentro del contenedor. Los endpoints administrativos (`/host/...`) exigen autorización mediante cabecera HTTP Bearer JWT emitido tras validar el PIN del local, garantizando que un comensal no pueda alterar la cola mediante peticiones directas.
 2. **Estrategia de Sincronización (Short Polling resiliente vs WebSockets):** Se opta por *Short Polling* (consultas HTTP GET repetidas cada 5 a 8 segundos con cabeceras de caché). En redes móviles inestables (como las entradas de restaurantes), el polling con reconexión nativa es infinitamente más estable y tolerante a fallos que conexiones persistentes como WebSockets o SSE sobre Cloud Run.
 3. **Roteo Multi-tenant por Slug:** Todas las URLs públicas e internas se estructuran mediante el parámetro `/join/{restaurant_slug}` o `/host/{restaurant_slug}`, desacoplando la interfaz de usuario de los IDs internos de la BD y facilitando el escalado futuro a 150 locales.
 
