@@ -48,7 +48,9 @@ def test_terminal_statuses_are_immutable(client, make_restaurant):
 
     for ticket_id in (seated_id, cancelled_id, no_show_id):
         for action in ("notify", "seat", "cancel", "no_show"):
-            response = client.patch(f"/tickets/{ticket_id}", json={"action": action}, headers=headers)
+            response = client.patch(
+                f"/tickets/{ticket_id}", json={"action": action}, headers=headers
+            )
             assert response.status_code == 409
 
 

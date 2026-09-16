@@ -5,6 +5,7 @@ import { Button } from '../../components/Button'
 import { useHostQueue } from '../../hooks/useHostQueue'
 import { clearHostSession } from './hostSession'
 import { DoorQrModal } from './DoorQrModal'
+import { DayReportModal } from './DayReportModal'
 import { QueueRow, type QueueRowPending } from './QueueRow'
 import { useReorderQueue } from './useReorderQueue'
 import { useTransitionTicket } from './useTransitionTicket'
@@ -18,6 +19,7 @@ export function HostQueueView({ slug }: HostQueueViewProps) {
   const transition = useTransitionTicket(slug)
   const reorder = useReorderQueue(slug)
   const [qrOpen, setQrOpen] = useState(false)
+  const [reportOpen, setReportOpen] = useState(false)
 
   const detail = (error: unknown): string =>
     error instanceof ApiError ? error.detail : 'Inténtalo de nuevo.'
@@ -64,6 +66,13 @@ export function HostQueueView({ slug }: HostQueueViewProps) {
             onClick={() => setQrOpen(true)}
           >
             QR de la puerta
+          </Button>
+          <Button
+            variant="secondary"
+            className="flex-1"
+            onClick={() => setReportOpen(true)}
+          >
+            Reporte del día
           </Button>
           <Button variant="secondary" className="flex-1" onClick={clearHostSession}>
             Cerrar sesión
@@ -122,6 +131,7 @@ export function HostQueueView({ slug }: HostQueueViewProps) {
       </footer>
 
       <DoorQrModal slug={slug} open={qrOpen} onOpenChange={setQrOpen} />
+      <DayReportModal slug={slug} open={reportOpen} onOpenChange={setReportOpen} />
     </section>
   )
 }

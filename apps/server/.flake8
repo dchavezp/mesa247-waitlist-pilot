@@ -1,0 +1,10 @@
+[flake8]
+max-line-length = 100
+# W292 (missing final newline) is this repo's existing style — files predate
+# the linter; adding newlines everywhere is not part of the pilot.
+extend-ignore = W292
+extend-exclude =
+    .venv,
+    __pycache__,
+    .pytest_cache,
+    .codegraph

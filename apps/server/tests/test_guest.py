@@ -29,7 +29,9 @@ def test_pilot_restaurants_are_seeded(seed_restaurants, client):
     }
     for slug in ("la-terraza-azul-pe", "cuatro-vientos-pe", "casa-mediterranea-cl"):
         assert (
-            client.get(f"/host/{slug}/queue", headers=auth_headers(client, slug, pins[slug])).status_code
+            client.get(
+                f"/host/{slug}/queue", headers=auth_headers(client, slug, pins[slug])
+            ).status_code
             == 200
         )
 
@@ -51,7 +53,7 @@ def test_join_assigns_contiguous_positions(client, make_restaurant):
 
 def test_ticket_status_reports_live_position(client, make_restaurant):
     slug = make_restaurant().slug
-    first = join(client, slug, "Ana")
+    join(client, slug, "Ana")
     second = join(client, slug, "Bruno")
 
     status = client.get(f"/tickets/{second['id']}").json()

@@ -63,7 +63,7 @@
 
 ## Fase 3 — Cierre y entrega
 
-- [ ] **T10. Reporte del día en web + endpoint ya listo**
+- [x] **T10. Reporte del día en web + endpoint ya listo**
   - Vista simple de cierre con los 5 números del prototipo.
 
 - [ ] **T11. README 5 minutos + contrato API**
