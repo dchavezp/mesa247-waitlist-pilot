@@ -5,9 +5,9 @@ from .models import Restaurant
 from .services.auth import hash_pin
 
 PILOT_RESTAURANTS = [
-    ("La Terraza Azul", "la-terraza-azul-pe", "PE", "AZUL24"),
-    ("Cuatro Vientos", "cuatro-vientos-pe", "PE", "VIENT4"),
-    ("Casa Mediterránea", "casa-mediterranea-cl", "CL", "MEDIT6"),
+    ("La Terraza Azul", "la-terraza-azul-pe", "PE", "111333"),
+    ("Cuatro Vientos", "cuatro-vientos-pe", "PE", "222555"),
+    ("Casa Mediterránea", "casa-mediterranea-cl", "CL", "333666"),
 ]
 
 

@@ -4,6 +4,8 @@
   "packageManager": "pnpm@11.7.0",
   "scripts": {
     "dev": "turbo run dev",
+    "dev:server": "turbo run dev --filter server",
+    "dev:web": "turbo run dev --filter web",
     "build": "turbo run build",
     "test": "turbo run test",
     "lint": "turbo run lint",
