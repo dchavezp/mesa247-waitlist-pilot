@@ -23,9 +23,9 @@ def auth_headers(client, slug, pin="111111"):
 
 def test_pilot_restaurants_are_seeded(seed_restaurants, client):
     pins = {
-        "la-terraza-azul-pe": "AZUL24",
-        "cuatro-vientos-pe": "VIENT4",
-        "casa-mediterranea-cl": "MEDIT6",
+        "la-terraza-azul-pe": "111333",
+        "cuatro-vientos-pe": "222555",
+        "casa-mediterranea-cl": "333666",
     }
     for slug in ("la-terraza-azul-pe", "cuatro-vientos-pe", "casa-mediterranea-cl"):
         assert (

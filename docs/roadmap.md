@@ -66,10 +66,10 @@
 - [x] **T10. Reporte del día en web + endpoint ya listo**
   - Vista simple de cierre con los 5 números del prototipo.
 
-- [ ] **T11. README 5 minutos + contrato API**
+- [x] **T11. README 5 minutos + contrato API**
   - Levantar backend + frontend + seed en 5 min; tabla de endpoints.
 
-- [ ] **T12. Verificación punta a punta local**
+- [x] **T12. Verificación punta a punta local**
   - Flujo completo: comensal se une → anfitrión ve → llama → comensal responde → sentar.
   - Tests verdes, README validado desde cero.
 
