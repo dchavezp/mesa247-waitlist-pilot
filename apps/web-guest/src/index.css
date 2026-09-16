@@ -1,0 +1,7 @@
+@import "@mesa247/shared/styles";
+
+/* Tailwind v4 scans sources relative to this file. The Vite root only covers
+   this app, so declare both this app's source and the shared package (which
+   lives outside it) to generate utilities used in each tree. */
+@source "../src";
+@source "../../../packages/shared/src";

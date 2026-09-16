@@ -15,9 +15,11 @@ El análisis de cortes y decisiones vive en `nota_tecnica_mesa247.md` y
 | Frontend | Vite, React 19, TypeScript, Tailwind CSS v4 (tokens `@theme`), TanStack Query v5, TanStack Router v1 (rutas por archivos), React Hook Form + Zod, Base UI (headless), qrcode.react, input-otp |
 | Tooling | Turborepo (monorepo), pnpm, oxlint, flake8 |
 
-Monorepo con dos apps: `apps/server` (API) y `apps/web` (React). Los comandos
-unificados del root usan Turborepo (`pnpm dev`, `pnpm seed`, ...) y cada app
-conserva sus comandos nativos.
+Monorepo con una API y **dos frontends separados** (T17/D56): `apps/server`
+(API), `apps/web-guest` (flujo comensal) y `apps/web-host` (tablet del
+anfitrión), más `packages/shared` con lo común (cliente API, types,
+componentes, tokens del tema). Los comandos unificados del root usan Turborepo
+(`pnpm dev`, `pnpm seed`, ...) y cada app conserva sus comandos nativos.
 
 ## Requisitos
 
@@ -38,7 +40,7 @@ uv sync --project apps/server
 # 3. Crear la base y sembrar 3 locales demo (idempotente)
 pnpm seed
 
-# 4. Levantar backend (:8000) + frontend (:5173) juntos
+# 4. Levantar backend (:8000) + comensal (:5173) + anfitrión (:5174) juntos
 pnpm dev
 ```
 
@@ -47,7 +49,9 @@ Listo:
 - **Comensal** → `http://localhost:5173/join/la-terraza-azul-pe` (o el QR en
   la vista anfitrión). El turno queda en "Tus turnos" y sobrevive al cierre
   del navegador (8 h).
-- **Anfitrión** → `http://localhost:5173/host/la-terraza-azul-pe`, login PIN.
+- **Anfitrión** → `http://localhost:5174/host/la-terraza-azul-pe`, login PIN
+  (los dos frontends sirven del mismo backend; cada uno en su propio origen de
+  producción y, por diseño, la app del comensal no incluye la sesión del host).
 
 Locales demo y PINs del seed:
 
@@ -70,12 +74,12 @@ Turborepo desde la raíz:
 
 | Comando | Qué hace |
 | --- | --- |
-| `pnpm dev` | Backend (:8000) + frontend (:5173) juntos |
-| `pnpm dev:server` / `pnpm dev:web` | Solo una app |
+| `pnpm dev` | Backend (:8000) + comensal (:5173) + anfitrión (:5174) juntos |
+| `pnpm dev:server` / `pnpm dev:web-guest` / `pnpm dev:host` | Solo una app |
 | `pnpm seed` | Crea tablas + 3 locales demo (idempotente) |
 | `pnpm test` | Tests backend (pytest) |
-| `pnpm build` | Typecheck + build de producción |
-| `pnpm lint` | flake8 (server) + oxlint (web) |
+| `pnpm build` | Typecheck + build de producción (ambas apps) |
+| `pnpm lint` | flake8 (server) + oxlint (web-guest y web-host) |
 | `pnpm clean` | Borra `mesa247.db` |
 
 Equivalentes por app (si preferís no usar Turbo):
@@ -86,14 +90,17 @@ uv run uvicorn app.main:app --reload --port 8000   # dev server
 uv run python -m app.seed                          # seed
 uv run pytest                                      # tests
 
-cd apps/web
-pnpm dev                                           # dev server :5173
+cd apps/web-guest   # o apps/web-host
+pnpm dev                                           # dev server :5173 (guest) / :5174 (host)
 pnpm build                                         # tsc -b && vite build
 ```
 
-Frontend: `src/api/client.ts` apunta a `VITE_API_BASE_URL ?? 'http://localhost:8000'`
-(ver `.env.example`). No hay proxy Vite: CORS del backend ya permite
-`http://localhost:5173`.
+Frontend: el cliente vive en `packages/shared` (`@mesa247/shared`) y apunta a
+`VITE_API_BASE_URL ?? 'http://localhost:8000'` (ver `.env.example`). No hay
+proxy Vite: CORS del backend ya permite `http://localhost:5173` y
+`http://localhost:5174`. Cada app inyecta su estrategia de sesión vía
+`createApiClient({ getToken?, onUnauthorized? })` — el guest no adjunta token;
+el host adjunta el JWT y limpia la sesión ante un 401 con token.
 
 ## Contrato API
 
@@ -156,10 +163,13 @@ curl http://localhost:8000/host/la-terraza-azul-pe/queue \
 ```
 apps/
   server/            FastAPI + SQLModel (app/api → services → models → core)
-  web/               React + Vite (src/api, src/features, src/routes, src/hooks)
+  web-guest/         React + Vite — comensal (/, /join/:slug, /tickets/:id)
+  web-host/          React + Vite — anfitrión (/host/:slug, login PIN)
+packages/
+  shared/            @mesa247/shared: cliente API, types, componentes, tokens, queryClient
 docs/
   PRD.md             Producto (qué/para quién)
-  roadmap.md         Plan de trabajo por tareas (T1–T16, chequeado de a una)
+  roadmap.md         Plan de trabajo por tareas (T1–T17, chequeado de a una)
   mapeo-conversaciones.md   Decision log = entregable 3 (qué decidimos y qué no)
   convenciones.md    Convenciones de código
   arquitectura.md    Reglas de capas (solo el backend)
@@ -174,7 +184,7 @@ con la persona al timón de cada decisión:
 
 1. **Fuente**: el brief (`prueba-fullstack-mesa247-pages-dev.md`) y la nota
    técnica fijan el alcance; `docs/roadmap.md` organiza el trabajo en tareas
-   pequeñas (T1–T16), una a la vez, aprobadas antes de implementar.
+   pequeñas (T1–T17), una a la vez, aprobadas antes de implementar.
 2. **Planificación**: cada tarea arranca con preguntas de producto/tecnología
    (4 forks iniciales: BD local, polling, estilos, tests) y termina con una
    fila en `docs/mapeo-conversaciones.md` (decisión + alternativas rechazadas).
@@ -187,7 +197,7 @@ con la persona al timón de cada decisión:
 4. **Memoria y contexto**: Google Engram persiste decisiones entre sesiones y
    CodeGraph indexa el código para respuestas estructurales sin leer archivo
    por archivo. Lo durable vive en `docs/`, no solo en memoria.
-5. **Verificación**: tests pytest por batch (`29 passed`), build/lint verdes,
+5. **Verificación**: tests pytest por batch (`31 passed`), build/lint verdes,
    y `T12` cierra con verificación punta a punta local.
 
 Regla de oro repetida en todo el proceso: el agente propone y ejecuta, la

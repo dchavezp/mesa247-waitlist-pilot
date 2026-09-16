@@ -10,7 +10,9 @@ at a time, approved by the user (`docs/roadmap.md`).
 ## Layout
 
 - `apps/server/` — FastAPI + SQLModel backend (uv-managed, Python 3.12)
-- `apps/web/` — React + TS + Vite frontend (scaffolded, T6): Tailwind v4 + TanStack Query + TanStack Router + React Hook Form (D28)
+- `apps/web-guest/` — React + TS + Vite **comensal**: `/`, `/join/:slug`, `/tickets/:id` (dev :5173)
+- `apps/web-host/` — React + TS + Vite **anfitrión tablet**: `/host/:slug` con login PIN (dev :5174)
+- `packages/shared/` — `@mesa247/shared`: cliente API (`createApiClient`), types del contrato, componentes UI, `queryClient`, tokens del `@theme` (`styles/tokens.css` — source única, ambas apps la importan). Consumido como TS fuente (sin build/dist).
 - `docs/` — product and process docs (see below)
 - `nota_tecnica_mesa247.md` — delivery artifact (architectural note)
 - `prueba-fullstack-mesa247-pages-dev.md` — the exam brief (source of truth for scope)
@@ -31,43 +33,63 @@ uv add <pkg>          # adds dep + updates uv.lock
 uv add --dev <pkg>    # dev dep
 ```
 
-Frontend commands (run from `apps/web/`, package manager is **pnpm**):
+Frontend commands (run from `apps/web-guest/` or `apps/web-host/`, package manager is **pnpm**):
 
 ```sh
-pnpm dev              # dev server on :5173 (backend CORS already allows it)
+pnpm dev              # dev server on :5173 (guest) or :5174 (host); backend CORS allows both
 pnpm build            # tsc -b && vite build; regenerates src/routeTree.gen.ts
 pnpm add <pkg>        # adds dep + updates pnpm-lock.yaml
 pnpm add -D <pkg>     # dev dep
 ```
 
+Root: `pnpm dev` (turbo) boots server + BOTH web apps. `pnpm dev:web-guest`, `pnpm dev:host`, `pnpm dev:server` boot one each. Shared code changes live in `packages/shared/` and hot-reload in both apps — never duplicate client/types/components/tokens between apps (D56).
+
 ## Frontend facts an agent would otherwise guess wrong
 
 - **Stack**: Vite + React 19 + TS, Tailwind **v4** (no config file — theming via CSS
-  `@theme` in `src/index.css`), TanStack Query v5, TanStack **Router** v1 (file-based
-  routes in `src/routes/`, `src/routeTree.gen.ts` is plugin-generated — never edit by
+  `@theme` in `packages/shared/src/styles/tokens.css`, imported by both apps),
+  TanStack Query v5, TanStack **Router** v1 (file-based routes in each app's
+  `src/routes/`, `src/routeTree.gen.ts` is plugin-generated — never edit by
   hand, re-run `pnpm dev`/`pnpm build` after route changes), React Hook Form v7 (D28),
   **Base UI** primitives (`@base-ui/react`, headless — D32).
-- **API client** lives in `src/api/` (`types.ts` mirrors the Pydantic schemas in
-  `apps/server/app/api/schemas.py` — snake_case, exact field names). `client.ts`
-  exposes `request<T>` + `ApiError` (status + Spanish `detail` from FastAPI).
-- **Base URL**: `import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'`
-  (see `.env.example`). The backend routes are **unprefixed** (`/join/{slug}`, etc.),
-  so there is intentionally **no Vite proxy** — the client talks to the API origin
-  directly and CORS allows `http://localhost:5173`.
-- **Polling**: the 5 s short-poll (D2) lives in `src/hooks/useTicketStatus.ts` and
-  `src/hooks/useHostQueue.ts` as `refetchInterval: 5_000`; the QueryClient defaults
-  are retry 3 + exponential backoff (cap 30 s) + staleTime 5 s.
-- **Ticket persistence (T8, D38)**: `src/features/ticket/ticketStorage.ts` keeps
+- **API client** lives in `packages/shared/src/api/`: `createApiClient({ getToken?, onUnauthorized? })`
+  returns the `request<T>` fn; `types.ts` mirrors the Pydantic schemas in
+  `apps/server/app/api/schemas.py` — snake_case, exact field names. The guest app
+  builds it without a token provider (its bundle never contains host session
+  code, D56); the host app injects `getHostToken`/`clearHostSession` and only a
+  401 that arrived with a token clears the session. `ApiError` (status + Spanish
+  `detail` from FastAPI) is exported from `@mesa247/shared`.
+- **Base URL**: each app reads its own Vite env and passes it to the client —
+  `createApiClient({ baseUrl: import.meta.env.VITE_API_BASE_URL })` in each
+  `apps/*/src/api/*.ts`. `packages/shared` owns the dev default
+  `'http://localhost:8000'` and **never reads `import.meta.env`** (it is plain TS
+  with no Vite build; that's why each app's tsconfig declares
+  `types: ["vite/client"]` and the shared tsconfig does not). The backend routes
+  are **unprefixed** (`/join/{slug}`, etc.), so there is intentionally **no Vite
+  proxy** — the client talks to the API origin directly and CORS allows
+  `http://localhost:5173` (guest) and `http://localhost:5174` (host).
+- **Polling**: the 5 s short-poll (D2) lives in `apps/web-guest/src/features/ticket/useTicketStatus.ts`
+  and `apps/web-host/src/hooks/useHostQueue.ts` as `refetchInterval: 5_000`; the QueryClient defaults
+  (shared in `packages/shared/src/queryClient.ts`) are retry 3 + exponential backoff (cap 30 s) + staleTime 5 s.
+- **Ticket persistence (T8, D38)**: `apps/web-guest/src/features/ticket/ticketStorage.ts` keeps
   turns in localStorage (`mesa247.tickets.v1`) with an **8 h TTL** from join; `/`
   lists them as live "Tus turnos" cards (`SavedTicketCard`, polling per card).
   Entries are removed on terminal status (SEATED/CANCELLED/NO_SHOW). Guest "Ya no
   voy" calls `POST /tickets/{id}/no-show` → NO_SHOW (D24) with a Base UI
   `AlertDialog` confirm (`LeaveTicketButton`); the route/ticket data updates from
-  cache, no extra poll. Re-opening a saved id never extends the TTL.
+  cache, no extra poll. Re-opening a saved id never extends the TTL. The host JWT
+  lives in `apps/web-host/src/features/host/hostSession.ts` (`mesa247.host-session.v1`)
+  — different app, and its code never ships to the guest (D56).
 - **Conventions** (D29, `docs/convenciones.md`): custom components in
-  `src/components/` (no UI libraries), SOLID on components/hooks, theme tokens via
-  `@theme` in `src/index.css` (never hardcoded values), validations with **Zod** +
+  `packages/shared/src/components/` (no UI libraries), SOLID on components/hooks, theme tokens via
+  `@theme` in `tokens.css` (never hardcoded values), validations with **Zod** +
   `zodResolver` from React Hook Form (zod + @hookform/resolvers are installed).
+- **Tailwind sources**: the `@import "tailwindcss"` lives in
+  `packages/shared/src/styles/tokens.css`, outside each Vite root, so Tailwind's
+  automatic detection would never see component code. Each app's `src/index.css`
+  declares its sources explicitly (`@source "../src"` and
+  `@source "../../../packages/shared/src"`). Do NOT re-add per-app copies of
+  shared components to "fix" missing styles — that is what D56 forbids.
 
 ## Backend facts an agent would otherwise guess wrong
 

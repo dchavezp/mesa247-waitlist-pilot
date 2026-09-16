@@ -1,0 +1,19 @@
+{
+  "name": "@mesa247/shared",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./styles": "./src/styles/tokens.css"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.102.8",
+    "input-otp": "^1.5.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.18"
+  }
+}

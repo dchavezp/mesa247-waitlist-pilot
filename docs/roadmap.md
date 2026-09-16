@@ -73,6 +73,12 @@
   - Flujo completo: comensal se une → anfitrión ve → llama → comensal responde → sentar.
   - Tests verdes, README validado desde cero.
 
+- [x] **T17. Separación host/comensal en dos apps Vite** (U34 → D56)
+  - `apps/web` → `apps/web-guest` (comensal, dev :5173) + `apps/web-host` (anfitrión, dev :5174).
+  - Común en `packages/shared`: cliente API con `createApiClient` (el guest no lleva la sesión del host),
+    types del contrato, componentes UI, `queryClient` y tokens del `@theme`.
+  - Backend intacto (solo CORS suma :5174); build/lint verdes en ambas apps, tests pytest pasan.
+
 - [ ] **T13. Entrega: repo + conversaciones + nota final**
   - Commit inicial, repo en GitHub con acceso a talento@mesa247.pe.
   - `docs/mapeo-conversaciones.md` completado con los chats reales por parte.
