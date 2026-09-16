@@ -11,11 +11,17 @@ function HostRoute() {
   const { slug } = Route.useParams()
   const session = useHostSession(slug)
   return (
-    <main className="flex min-h-dvh items-center justify-center bg-surface px-4 py-10">
-      {/* La cola con acciones necesita un poco más de ancho; el login queda en max-w-sm. */}
-      <div className={session ? 'w-full max-w-md' : 'w-full max-w-sm'}>
-        {session ? <HostQueueView slug={slug} /> : <HostLoginForm slug={slug} />}
-      </div>
+    <main className="min-h-dvh bg-surface px-6 py-6">
+      {/* Board a todo el ancho con 24px de padding (U29); el login queda centrado en max-w-sm. */}
+      {session ? (
+        <HostQueueView slug={slug} />
+      ) : (
+        <div className="flex min-h-[calc(100dvh-3rem)] items-center justify-center py-10">
+          <div className="w-full max-w-sm">
+            <HostLoginForm slug={slug} />
+          </div>
+        </div>
+      )}
     </main>
   )
 }

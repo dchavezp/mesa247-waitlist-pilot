@@ -19,10 +19,23 @@ from ..schemas import (
     HostQueueItem,
     HostTransitionRequest,
     ReorderRequest,
+    RestaurantInfoResponse,
     TicketStatusResponse,
 )
 
 router = APIRouter(tags=["host"])
+
+
+@router.get("/host/{slug}", response_model=RestaurantInfoResponse)
+def host_info(
+    slug: str,
+    _identity: HostIdentity = Depends(require_host_for),
+    session: Session = Depends(get_session),
+) -> RestaurantInfoResponse:
+    restaurant = get_restaurant_by_slug(session, slug)
+    if restaurant is None:
+        raise HTTPException(status_code=404, detail="Local no encontrado")
+    return RestaurantInfoResponse.model_validate(restaurant)
 
 
 @router.get("/host/{slug}/queue", response_model=list[HostQueueItem])

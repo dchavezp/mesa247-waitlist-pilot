@@ -16,6 +16,7 @@ class QueueStatus(str, Enum):
 class Restaurant(SQLModel, table=True):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
     name: str = Field(max_length=100)
+    description: str | None = Field(default=None, max_length=200)
     slug: str = Field(unique=True, index=True, max_length=50)
     country_code: str = Field(max_length=5)
     pin_code_hash: str = Field(max_length=120)

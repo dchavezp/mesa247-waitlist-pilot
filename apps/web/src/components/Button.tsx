@@ -19,7 +19,7 @@ export function Button({
   ...props
 }: ButtonProps) {
   const classes = [
-    'rounded-lg px-4 py-2 font-medium transition-colors',
+    'inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 font-medium transition-colors',
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-surface',
     'disabled:opacity-60',
     variantClasses[variant],

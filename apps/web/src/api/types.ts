@@ -30,6 +30,12 @@ export interface HostQueueItem {
   notified_at: string | null
 }
 
+export interface RestaurantInfo {
+  slug: string
+  name: string
+  description: string | null
+}
+
 export interface ReorderRequest {
   order: string[]
 }

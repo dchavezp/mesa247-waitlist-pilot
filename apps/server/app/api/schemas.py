@@ -1,7 +1,7 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_serializer
 
 from ..models import QueueStatus
 
@@ -36,6 +36,24 @@ class HostQueueItem(BaseModel):
     position: int
     estimated_minutes: int
     notified_at: datetime | None = None
+
+    @field_serializer("notified_at")
+    def serialize_notified_at(self, value: datetime | None) -> str | None:
+        # Stored datetimes are naive UTC (SQLite drops tzinfo, D26); emit the
+        # offset so clients parse the instant instead of their local time.
+        if value is None:
+            return None
+        if value.tzinfo is None:
+            value = value.replace(tzinfo=timezone.utc)
+        return value.isoformat()
+
+
+class RestaurantInfoResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    slug: str
+    name: str
+    description: str | None = None
 
 
 class HostTransitionRequest(BaseModel):

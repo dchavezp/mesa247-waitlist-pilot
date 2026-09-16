@@ -25,6 +25,21 @@ def test_notify_is_idempotent(client, make_restaurant):
     assert first.status_code == second.status_code == 200
 
 
+def test_host_queue_notified_at_is_utc_aware(client, make_restaurant):
+    """The wire timestamp must pin its instant: naive UTC is stored (D26), the
+    API serializes an explicit +00:00 offset so clients don't misread it as
+    local time (U33)."""
+    slug = make_restaurant().slug
+    headers = auth_headers(client, slug)
+    ticket_id = join(client, slug, "Ana")["id"]
+
+    client.patch(f"/tickets/{ticket_id}", json={"action": "notify"}, headers=headers)
+    queue = client.get(f"/host/{slug}/queue", headers=headers).json()
+    notified_at = next(item["notified_at"] for item in queue if item["id"] == ticket_id)
+    assert notified_at is not None
+    assert notified_at.endswith("+00:00")
+
+
 def test_cannot_seat_a_ticket_that_was_never_notified(client, make_restaurant):
     slug = make_restaurant().slug
     headers = auth_headers(client, slug)
@@ -71,9 +86,11 @@ def test_queue_is_reindexed_after_seat(client, make_restaurant):
     client.patch(f"/tickets/{first['id']}", json={"action": "notify"}, headers=headers)
     client.patch(f"/tickets/{first['id']}", json={"action": "seat"}, headers=headers)
 
+    # Live queue first, then the day's history: the seated card stays with its chip.
     queue = client.get(f"/host/{slug}/queue", headers=headers).json()
-    assert [item["position"] for item in queue] == [1, 2]
-    assert [item["id"] for item in queue] == [second["id"], third["id"]]
+    assert [item["id"] for item in queue] == [second["id"], third["id"], first["id"]]
+    assert [item["status"] for item in queue] == ["WAITING", "WAITING", "SEATED"]
+    assert [item["position"] for item in queue[:2]] == [1, 2]
 
     # The guest view agrees: second moved from position 2 to 1.
     status = client.get(f"/tickets/{second['id']}").json()
@@ -86,8 +103,11 @@ def test_queue_is_reindexed_after_cancel(client, make_restaurant):
     tickets = [join(client, slug, f"Guest {i}") for i in range(4)]
     client.patch(f"/tickets/{tickets[1]['id']}", json={"action": "cancel"}, headers=headers)
 
+    # Active cards reindex to 1..3; the cancelled card trails as history with its chip.
     queue = client.get(f"/host/{slug}/queue", headers=headers).json()
-    assert [item["position"] for item in queue] == [1, 2, 3]
+    assert [item["position"] for item in queue[:3]] == [1, 2, 3]
+    assert queue[3]["status"] == "CANCELLED"
+    assert queue[3]["id"] == tickets[1]["id"]
 
 
 def test_queue_is_reindexed_after_no_show(client, make_restaurant):
@@ -97,10 +117,12 @@ def test_queue_is_reindexed_after_no_show(client, make_restaurant):
     client.patch(f"/tickets/{tickets[0]['id']}", json={"action": "no_show"}, headers=headers)
 
     queue = client.get(f"/host/{slug}/queue", headers=headers).json()
-    assert [item["position"] for item in queue] == [1, 2]
+    assert [item["position"] for item in queue[:2]] == [1, 2]
+    assert queue[2]["status"] == "NO_SHOW"
+    assert queue[2]["id"] == tickets[0]["id"]
 
 
-def test_host_queue_excludes_terminal_tickets(client, make_restaurant):
+def test_host_queue_keeps_terminal_tickets_with_status(client, make_restaurant):
     slug = make_restaurant().slug
     headers = auth_headers(client, slug)
     seated = join(client, slug, "Ana")
@@ -109,7 +131,15 @@ def test_host_queue_excludes_terminal_tickets(client, make_restaurant):
     client.patch(f"/tickets/{seated['id']}", json={"action": "seat"}, headers=headers)
 
     queue = client.get(f"/host/{slug}/queue", headers=headers).json()
-    assert [item["id"] for item in queue] == [waiting["id"]]
+    assert [item["id"] for item in queue] == [waiting["id"], seated["id"]]
+    assert queue[1]["status"] == "SEATED"
+
+
+def test_host_info_requires_authentication(client, make_restaurant):
+    slug = make_restaurant().slug
+    assert client.get(f"/host/{slug}").status_code == 401
+    info = client.get(f"/host/{slug}", headers=auth_headers(client, slug)).json()
+    assert info == {"slug": slug, "name": "Test Place", "description": None}
 
 
 def test_reorder_accepts_only_a_permutation_of_active_ids(client, make_restaurant):
@@ -155,10 +185,11 @@ def test_day_report_counts_the_pilot_numbers(client, make_restaurant):
     client.patch(f"/tickets/{cancelled['id']}", json={"action": "cancel"}, headers=headers)
 
     report = client.get(f"/host/{slug}/report", headers=headers).json()
+    # All counts are people, not groups (U31): every join here is a party of 2.
     assert report == {
-        "joined": 3,
-        "seated": 1,
-        "left_without_seat": 1,
+        "joined": 6,
+        "seated": 2,
+        "left_without_seat": 2,
         "no_show": 0,
         "avg_wait_minutes": 0,
     }

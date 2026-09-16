@@ -5,11 +5,16 @@ import type {
   HostLoginRequest,
   HostLoginResponse,
   HostQueueItem,
+  RestaurantInfo,
   TicketStatus,
 } from './types'
 
 export function getHostQueue(slug: string): Promise<HostQueueItem[]> {
   return request<HostQueueItem[]>(`/host/${slug}/queue`)
+}
+
+export function getRestaurantInfo(slug: string): Promise<RestaurantInfo> {
+  return request<RestaurantInfo>(`/host/${slug}`)
 }
 
 export function transitionTicket(id: string, action: HostAction): Promise<TicketStatus> {

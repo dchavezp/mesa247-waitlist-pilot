@@ -35,6 +35,14 @@ def test_pilot_restaurants_are_seeded(seed_restaurants, client):
             == 200
         )
 
+    # The host board shows the restaurant's name and description (U29).
+    terraza = client.get(
+        "/host/la-terraza-azul-pe",
+        headers=auth_headers(client, "la-terraza-azul-pe", "111333"),
+    ).json()
+    assert terraza["name"] == "La Terraza Azul"
+    assert terraza["description"]
+
 
 def test_join_assigns_contiguous_positions(client, make_restaurant):
     slug = make_restaurant().slug
@@ -85,7 +93,7 @@ def test_ticket_status_unknown_ticket_returns_404(client):
     assert client.get("/tickets/unknown-id").status_code == 404
 
 
-def test_guest_no_show_leaves_the_queue(client, make_restaurant):
+def test_guest_no_show_keeps_card_with_status_in_host_queue(client, make_restaurant):
     slug = make_restaurant().slug
     first = join(client, slug, "Ana")
     second = join(client, slug, "Bruno")
@@ -98,8 +106,10 @@ def test_guest_no_show_leaves_the_queue(client, make_restaurant):
     status = client.get(f"/tickets/{second['id']}").json()
     assert status["position"] == 1
 
+    # The host board keeps the card with its NO_SHOW chip, as day history.
     queue = client.get(f"/host/{slug}/queue", headers=auth_headers(client, slug)).json()
-    assert [item["id"] for item in queue] == [second["id"]]
+    assert [item["id"] for item in queue] == [second["id"], first["id"]]
+    assert queue[1]["status"] == "NO_SHOW"
 
 
 def test_guest_no_show_on_terminal_ticket_returns_409(client, make_restaurant):

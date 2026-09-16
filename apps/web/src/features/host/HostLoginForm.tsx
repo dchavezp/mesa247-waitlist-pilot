@@ -1,6 +1,7 @@
 import { useId, useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp'
+import { KeyRound, LogIn } from 'lucide-react'
 import { Controller, useForm, type Resolver } from 'react-hook-form'
 import { ApiError } from '../../api/client'
 import { hostLogin } from '../../api/host'
@@ -47,21 +48,21 @@ export function HostLoginForm({ slug }: HostLoginFormProps) {
   })
 
   return (
-    <section className="rounded-2xl border border-line bg-surface-raised shadow-card">
-      <header className="px-6 pt-6">
-        <h1 className="text-2xl font-semibold tracking-tight text-ink">
-          Panel del anfitrión
-        </h1>
-        <p className="mt-1.5 text-sm text-ink-muted">
-          Ingresa el PIN del local para gestionar la cola.
-        </p>
-      </header>
+    <div className="w-full">
+      <p className="text-xs font-medium uppercase tracking-wide text-ink-muted">
+        Mesa247
+      </p>
+      <h1 className="mt-2 text-2xl font-semibold tracking-tight text-ink">
+        Panel del anfitrión
+      </h1>
+      <p className="mt-1.5 text-sm text-ink-muted">
+        Ingresa el PIN del local para gestionar la cola.
+      </p>
 
-      <div className="mx-6 mt-5 border-t border-dashed border-line" aria-hidden="true" />
-
-      <form onSubmit={onSubmit} className="space-y-5 px-6 py-5" noValidate>
+      <form onSubmit={onSubmit} className="mt-8 space-y-5" noValidate>
         <div>
-          <label htmlFor={otpId} className="mb-1 block text-sm font-medium text-ink">
+          <label htmlFor={otpId} className="mb-1.5 flex items-center gap-1.5 text-sm font-medium text-ink">
+            <KeyRound className="size-4" aria-hidden="true" />
             PIN de 6 caracteres
           </label>
           <Controller
@@ -105,8 +106,9 @@ export function HostLoginForm({ slug }: HostLoginFormProps) {
 
         <Button type="submit" disabled={isSubmitting} className="w-full">
           {isSubmitting ? 'Ingresando…' : 'Entrar'}
+          <LogIn className="size-4" aria-hidden="true" />
         </Button>
       </form>
-    </section>
+    </div>
   )
 }

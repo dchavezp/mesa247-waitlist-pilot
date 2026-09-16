@@ -98,7 +98,31 @@ def get_ticket_status(session: Session, ticket_id: str) -> TicketStatus | None:
 
 
 def get_host_queue(session: Session, restaurant: Restaurant) -> list[HostQueueItem]:
-    entries = _active_entries(session, restaurant.id)
+    """Today's entries for the host board: the live queue first, then history.
+
+    The host keeps served/cancelled cards visible with their status chip, so
+    this returns every ticket created today — active ones in queue order, then
+    terminal ones most recent first. Reorder still validates only against the
+    active ids (contrato D3)."""
+    now_utc = _as_utc_naive(datetime.now(timezone.utc))
+    day_start = now_utc.replace(hour=0, minute=0, second=0, microsecond=0)
+    day_end = day_start + timedelta(days=1)
+    entries = session.exec(
+        select(QueueEntry).where(
+            QueueEntry.restaurant_id == restaurant.id,
+            QueueEntry.created_at >= day_start,
+            QueueEntry.created_at < day_end,
+        )
+    ).all()
+    active = sorted(
+        (e for e in entries if e.status in ACTIVE_STATUSES),
+        key=lambda e: e.position_index,
+    )
+    terminal = sorted(
+        (e for e in entries if e.status not in ACTIVE_STATUSES),
+        key=lambda e: e.created_at,
+        reverse=True,
+    )
     minutes_per_group = _minutes_per_group(session, restaurant.id)
     return [
         HostQueueItem(
@@ -110,7 +134,7 @@ def get_host_queue(session: Session, restaurant: Restaurant) -> list[HostQueueIt
             estimated_minutes=entry.position_index * minutes_per_group,
             notified_at=entry.notified_at,
         )
-        for entry in entries
+        for entry in [*active, *terminal]
     ]
 
 
@@ -190,11 +214,12 @@ def get_day_report(session: Session, restaurant: Restaurant) -> DayReport:
     else:
         avg_wait_minutes = 0
 
+    # All counts are people, not groups: a party of 4 consumes four seats (U31).
     return DayReport(
-        joined=len(created_today),
-        seated=sum(1 for e in created_today if e.status == QueueStatus.SEATED),
-        left_without_seat=sum(1 for e in created_today if e.status == QueueStatus.CANCELLED),
-        no_show=sum(1 for e in created_today if e.status == QueueStatus.NO_SHOW),
+        joined=sum(e.party_size for e in created_today),
+        seated=sum(e.party_size for e in created_today if e.status == QueueStatus.SEATED),
+        left_without_seat=sum(e.party_size for e in created_today if e.status == QueueStatus.CANCELLED),
+        no_show=sum(e.party_size for e in created_today if e.status == QueueStatus.NO_SHOW),
         avg_wait_minutes=avg_wait_minutes,
     )
 
