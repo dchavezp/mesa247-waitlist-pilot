@@ -8,12 +8,12 @@ from test_guest import auth_headers, join, login
 
 def test_login_with_wrong_pin_returns_401(client, make_restaurant):
     slug = make_restaurant().slug
-    response = client.post(f"/host/{slug}/login", json={"pin": "0000"})
+    response = client.post(f"/host/{slug}/login", json={"pin": "000000"})
     assert response.status_code == 401
 
 
 def test_login_unknown_restaurant_returns_404(client):
-    response = client.post("/host/does-not-exist/login", json={"pin": "1111"})
+    response = client.post("/host/does-not-exist/login", json={"pin": "111111"})
     assert response.status_code == 404
 
 

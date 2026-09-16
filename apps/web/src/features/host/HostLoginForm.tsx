@@ -1,10 +1,16 @@
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm, type Resolver } from 'react-hook-form'
+import { REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp'
+import { Controller, useForm, type Resolver } from 'react-hook-form'
 import { ApiError } from '../../api/client'
 import { hostLogin } from '../../api/host'
 import { Button } from '../../components/Button'
-import { Field } from '../../components/Field'
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from '../../components/InputOTP'
 import { saveHostSession } from './hostSession'
 import { hostLoginSchema, type HostLoginForm } from './hostSchema'
 
@@ -14,9 +20,11 @@ interface HostLoginFormProps {
 
 export function HostLoginForm({ slug }: HostLoginFormProps) {
   const [formError, setFormError] = useState<string | null>(null)
+  const otpId = useId()
+  const pinErrorId = useId()
 
   const {
-    register,
+    control,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<HostLoginForm>({
@@ -28,8 +36,6 @@ export function HostLoginForm({ slug }: HostLoginFormProps) {
     setFormError(null)
     try {
       const session = await hostLogin(slug, values.pin)
-      // Al guardar la sesión, useHostSession notifica y la ruta pasa al
-      // estado "Sesión iniciada" sin navegación adicional.
       saveHostSession(slug, session.access_token, session.expires_in)
     } catch (error) {
       setFormError(
@@ -54,15 +60,42 @@ export function HostLoginForm({ slug }: HostLoginFormProps) {
       <div className="mx-6 mt-5 border-t border-dashed border-line" aria-hidden="true" />
 
       <form onSubmit={onSubmit} className="space-y-5 px-6 py-5" noValidate>
-        <Field
-          label="PIN"
-          type="password"
-          inputMode="numeric"
-          autoComplete="current-password"
-          placeholder="••••"
-          error={errors.pin?.message}
-          {...register('pin')}
-        />
+        <div>
+          <label htmlFor={otpId} className="mb-1 block text-sm font-medium text-ink">
+            PIN de 6 caracteres
+          </label>
+          <Controller
+            name="pin"
+            control={control}
+            render={({ field, fieldState }) => (
+              <InputOTP
+                id={otpId}
+                maxLength={6}
+                pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
+                aria-invalid={fieldState.invalid || undefined}
+                aria-describedby={fieldState.error ? pinErrorId : undefined}
+                {...field}
+              >
+                <InputOTPGroup>
+                  <InputOTPSlot index={0} />
+                  <InputOTPSlot index={1} />
+                  <InputOTPSlot index={2} />
+                </InputOTPGroup>
+                <InputOTPSeparator />
+                <InputOTPGroup>
+                  <InputOTPSlot index={3} />
+                  <InputOTPSlot index={4} />
+                  <InputOTPSlot index={5} />
+                </InputOTPGroup>
+              </InputOTP>
+            )}
+          />
+          {errors.pin?.message ? (
+            <p id={pinErrorId} className="mt-1 text-sm text-danger">
+              {errors.pin.message}
+            </p>
+          ) : null}
+        </div>
 
         {formError ? (
           <p role="alert" className="text-sm text-danger">

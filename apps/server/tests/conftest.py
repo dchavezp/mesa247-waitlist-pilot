@@ -41,7 +41,7 @@ def make_restaurant():
                 name=name,
                 slug=f"test-{uuid4().hex[:12]}",
                 country_code=country_code,
-                pin_code_hash=hash_pin("1111"),
+                pin_code_hash=hash_pin("111111"),
             )
             session.add(restaurant)
             session.commit()

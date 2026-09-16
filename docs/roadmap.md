@@ -58,7 +58,7 @@
 - [x] **T16. Login tablet (PIN)**
   - `/host/:slug` arranca con pantalla de PIN; token guardado y enviado como `Authorization` en `client.ts`; 401 → vuelve al login.
 
-- [ ] **T9. Vista anfitrión** (`/host/:slug`, detrás del login T16)
+- [x] **T9. Vista anfitrión** (`/host/:slug`, detrás del login T16)
   - Cola en vivo, llamar/sentar/cancelar, priorizar (frecuente), modal con QR de la puerta.
 
 ## Fase 3 — Cierre y entrega

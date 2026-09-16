@@ -11,21 +11,21 @@ def join(client, slug, name, party_size=2):
     return response.json()
 
 
-def login(client, slug, pin="1111"):
+def login(client, slug, pin="111111"):
     response = client.post(f"/host/{slug}/login", json={"pin": pin})
     assert response.status_code == 200
     return response.json()["access_token"]
 
 
-def auth_headers(client, slug, pin="1111"):
+def auth_headers(client, slug, pin="111111"):
     return {"Authorization": f"Bearer {login(client, slug, pin)}"}
 
 
 def test_pilot_restaurants_are_seeded(seed_restaurants, client):
     pins = {
-        "la-terraza-azul-pe": "1111",
-        "cuatro-vientos-pe": "2222",
-        "casa-mediterranea-cl": "3333",
+        "la-terraza-azul-pe": "AZUL24",
+        "cuatro-vientos-pe": "VIENT4",
+        "casa-mediterranea-cl": "MEDIT6",
     }
     for slug in ("la-terraza-azul-pe", "cuatro-vientos-pe", "casa-mediterranea-cl"):
         assert (

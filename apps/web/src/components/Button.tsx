@@ -1,10 +1,11 @@
 import type { ComponentProps } from 'react'
 
-type ButtonVariant = 'primary' | 'secondary'
+type ButtonVariant = 'primary' | 'secondary' | 'danger'
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary: 'bg-brand text-on-brand hover:bg-brand-strong',
   secondary: 'bg-surface-raised text-ink border border-line hover:border-brand-strong',
+  danger: 'text-danger border border-danger hover:bg-danger-soft',
 }
 
 interface ButtonProps extends ComponentProps<'button'> {

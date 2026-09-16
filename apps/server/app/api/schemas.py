@@ -57,7 +57,7 @@ class DayReportResponse(BaseModel):
 
 
 class HostLoginRequest(BaseModel):
-    pin: str = Field(min_length=4, max_length=6, pattern=r"^\d+$")
+    pin: str = Field(min_length=6, max_length=6, pattern=r"^[a-zA-Z0-9]{6}$")
 
 
 class HostLoginResponse(BaseModel):

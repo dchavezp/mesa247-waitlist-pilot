@@ -49,6 +49,20 @@
       transform: scale(1);
     }
   }
+
+  /* Functional caret for the focused OTP slot, not a decorative moment;
+     disabled under prefers-reduced-motion like ticket-warm. */
+  --animate-caret-blink: caret-blink 1s step-end infinite;
+
+  @keyframes caret-blink {
+    from,
+    to {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+  }
 }
 
 @layer base {
@@ -76,7 +90,8 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .animate-ticket-warm {
+    .animate-ticket-warm,
+    .animate-caret-blink {
       animation: none;
     }
   }
