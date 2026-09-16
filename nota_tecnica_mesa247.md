@@ -47,6 +47,7 @@
 TABLE restaurants (
     id VARCHAR(36) PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
+    description VARCHAR(200) NULL,
     slug VARCHAR(50) UNIQUE NOT NULL,
     pin_hash VARCHAR(120) NOT NULL,
     country_code VARCHAR(5) NOT NULL,

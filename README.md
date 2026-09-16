@@ -66,7 +66,7 @@ Verificación rápida: `curl http://localhost:8000/health` → `{"status":"ok","
 > La base por defecto es SQLite en `apps/server/mesa247.db`; para MySQL copia
 > `apps/server/.env.example` a `./apps/server/.env` y configura
 > `DATABASE_URL`. Las tablas se crean solas al arrancar (sin migraciones en
-> el piloto). Si algo se rompe: `pnpm clean` borra la base y repetís seed.
+> el piloto). Si algo se rompe: `pnpm clean` borra la base y repite el seed.
 
 ## Comandos
 
