@@ -1,11 +1,11 @@
 import type { ReactNode } from 'react'
 import type { QueueStatus } from '@mesa247/shared'
 import { Button } from '@mesa247/shared'
-import { CircleCheck, CircleX, UserX } from 'lucide-react'
+import { BookmarkCheck, CircleCheck, CircleX, UserX } from 'lucide-react'
 
 const statusIcons: Record<QueueStatus, ReactNode> = {
   WAITING: null,
-  NOTIFIED: null,
+  NOTIFIED: <BookmarkCheck className='size-14 text-brand animate-pulse'/>,
   SEATED: <CircleCheck className="size-14 text-success" />,
   CANCELLED: <CircleX className="size-14 text-danger" />,
   NO_SHOW: <UserX className="size-14 text-warning" />,
@@ -15,7 +15,7 @@ const statusCopies: Record<QueueStatus, ReactNode> = {
   WAITING: null,
   NOTIFIED: 
           <>
-            <h1 className="mt-6 text-2xl font-semibold text-brand">
+            <h1 className="mt-6 text-2xl font-semibold text-brand animate-pulse">
               ¡Tu mesa está lista!
             </h1>
             <p className="mt-1.5 text-sm text-ink-muted">
@@ -64,7 +64,7 @@ export function TicketCard({
   /** Acciones del comensal (ej. "Ya no voy") mientras el turno está activo. */
   actions?: ReactNode
 }) {
-  const hero = status === 'WAITING' || status === 'NOTIFIED'
+  const hero = status === 'WAITING'
 
   return (
     <section aria-label="Tu turno" className="text-center">

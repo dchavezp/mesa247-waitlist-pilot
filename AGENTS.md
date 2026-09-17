@@ -110,7 +110,9 @@ Root: `pnpm dev` (turbo) boots server + BOTH web apps. `pnpm dev:web-guest`, `pn
   `POST /host/{slug}/queue/reorder` accepts ONLY a permutation of the restaurant's
   active ids → 409 otherwise (tablet resyncs on next poll). `GET /host/{slug}/report`
   returns the 5 pilot numbers (`joined, seated, left_without_seat, no_show,
-  avg_wait_minutes`) scoped to the **UTC day** (no per-restaurant TZ in the pilot).
+  avg_wait_minutes`) scoped to the **restaurant's local day** (D61: `country_code`
+  → IANA via `_local_day_bounds`, PE→America/Lima, CL→America/Santiago, fallback
+  UTC; the DB stores naive UTC, D55 — the day cut projects local midnight to UTC).
   All `/host/*` routes except `POST /host/{slug}/login`, plus `PATCH /tickets/{id}`,
   require `Authorization: Bearer <jwt>` from login (T15, D40): no/wrong/expired tokens
   get 401, and a token only works for its own restaurant (`require_host_for` scopes

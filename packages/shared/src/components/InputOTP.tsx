@@ -1,15 +1,14 @@
 import { useContext, type ComponentProps } from 'react'
 import { OTPInput, OTPInputContext } from 'input-otp'
+import { cn } from '../lib/cn'
 
 export function InputOTP({
   className,
   containerClassName,
   ...props
 }: ComponentProps<typeof OTPInput> & { containerClassName?: string }) {
-  const containerClasses = ['flex w-full items-center has-disabled:opacity-50', containerClassName]
-    .filter(Boolean)
-    .join(' ')
-  const inputClasses = ['disabled:cursor-not-allowed', className].filter(Boolean).join(' ')
+  const containerClasses = cn('flex w-full items-center has-disabled:opacity-50', containerClassName)
+  const inputClasses = cn('disabled:cursor-not-allowed', className)
 
   return (
     <OTPInput
@@ -23,13 +22,11 @@ export function InputOTP({
 }
 
 export function InputOTPGroup({ className, ...props }: ComponentProps<'div'>) {
-  const classes = [
+  const classes = cn(
     'flex flex-1 items-center rounded-lg',
     'has-aria-invalid:border-danger has-aria-invalid:ring-3 has-aria-invalid:ring-danger/20',
     className,
-  ]
-    .filter(Boolean)
-    .join(' ')
+  )
 
   return <div data-slot="input-otp-group" className={classes} {...props} />
 }
@@ -42,7 +39,7 @@ export function InputOTPSlot({
   const { slots } = useContext(OTPInputContext)
   const { char, hasFakeCaret, isActive } = slots[index] ?? {}
 
-  const classes = [
+  const classes = cn(
     'relative flex h-12 flex-1 items-center justify-center border-y border-r border-line text-xl transition-all outline-none',
     'first:rounded-l-lg first:border-l last:rounded-r-lg',
     'bg-surface',
@@ -50,9 +47,7 @@ export function InputOTPSlot({
     'data-[active=true]:z-10 data-[active=true]:border-brand data-[active=true]:ring-3 data-[active=true]:ring-brand/50',
     'data-[active=true]:aria-invalid:border-danger data-[active=true]:aria-invalid:ring-danger/20',
     className,
-  ]
-    .filter(Boolean)
-    .join(' ')
+  )
 
   return (
     <div data-slot="input-otp-slot" data-active={isActive} className={classes} {...props}>

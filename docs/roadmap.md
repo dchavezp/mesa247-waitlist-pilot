@@ -85,7 +85,7 @@
     types del contrato, componentes UI, `queryClient` y tokens del `@theme`.
   - Backend intacto (solo CORS suma :5174); build/lint verdes en ambas apps, tests pytest pasan.
 
-- [ ] **T13. Entrega: repo + conversaciones + nota final**
+- [x] **T13. Entrega: repo + conversaciones + nota final**
   - Commit inicial, repo en GitHub con acceso a talento@mesa247.pe.
   - `docs/mapeo-conversaciones.md` completado con los chats reales por parte.
   - Nota técnica revisada + diez líneas del entregable 4.

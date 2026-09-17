@@ -1,0 +1,28 @@
+# VCS / tooling local
+.git
+.gitignore
+.atl
+.agents
+.codegraph
+.vscode
+.impeccable
+.hermes
+.codex
+.claude
+openspec
+
+# Dependencias y artefactos de build
+**/node_modules
+**/dist
+**/build
+**/.venv
+**/*.tsbuildinfo
+
+# Datos y secretos (el server crea su BD en el volumen, no en el contexto)
+**/*.db
+**/.env
+**/.env.*
+
+# Docs y entregables (no van a las imágenes de build)
+docs
+*.md

@@ -1,8 +1,10 @@
 import type { ComponentProps } from 'react'
+import { cn } from '../lib/cn'
 
 // InputGroup: contenedor con borde y focus-within; el addon (prefijo) y el
 // input comparten un solo borde, patrón tomado de shadcn InputGroup y
-// adaptado a los tokens del tema (D30). Sin cva/cn: clases estáticas.
+// adaptado a los tokens del tema (D30). Las clases se combinan con el util
+// cn compartido (twMerge resuelve conflictos con className del consumidor).
 
 type InputGroupProps = ComponentProps<'div'> & {
   /** Borde rojo cuando el campo tiene error (aria-invalid en el control). */
@@ -13,11 +15,11 @@ export function InputGroup({ invalid, className, ...divProps }: InputGroupProps)
   return (
     <div
       {...divProps}
-      className={`flex w-full items-center rounded-lg border bg-surface transition-colors focus-within:outline-none ${
-        invalid
-          ? 'border-danger focus-within:border-danger'
-          : 'border-line focus-within:border-brand'
-      } ${className ?? ''}`}
+      className={cn(
+        'flex w-full items-center rounded-lg border bg-surface transition-colors focus-within:outline-none',
+        invalid ? 'border-danger focus-within:border-danger' : 'border-line focus-within:border-brand',
+        className,
+      )}
     />
   )
 }
@@ -29,7 +31,7 @@ export function InputGroupAddon({ className, ...spanProps }: InputGroupAddonProp
   return (
     <span
       {...spanProps}
-      className={`select-none border-r border-line px-3 text-sm text-ink-muted ${className ?? ''}`}
+      className={cn('select-none border-r border-line px-3 text-sm text-ink-muted', className)}
     />
   )
 }
@@ -41,7 +43,10 @@ export function InputGroupInput({ className, ...inputProps }: InputGroupInputPro
   return (
     <input
       {...inputProps}
-      className={`min-w-0 flex-1 bg-transparent px-3 py-2 text-ink placeholder:text-ink-muted focus:outline-none ${className ?? ''}`}
+      className={cn(
+        'min-w-0 flex-1 bg-transparent px-3 py-2 text-ink placeholder:text-ink-muted focus:outline-none',
+        className,
+      )}
     />
   )
 }

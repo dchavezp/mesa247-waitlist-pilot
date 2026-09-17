@@ -1,0 +1,34 @@
+# syntax=docker/dockerfile:1
+
+# Backend FastAPI + SQLModel (uv-managed).
+# Build:  docker build -f Dockerfile.server -t mesa247-server .
+# Contexto: raíz del repo (docker compose ya lo usa así).
+
+FROM python:3.12-slim AS runtime
+
+# uv desde la imagen oficial, misma versión que el dev local (0.12.13).
+COPY --from=ghcr.io/astral-sh/uv:0.12.13 /uv /uv/bin/uv
+
+ENV PATH="/uv/bin:/app/apps/server/.venv/bin:${PATH}" \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy \
+    UV_PYTHON_DOWNLOADS=never
+
+WORKDIR /app/apps/server
+
+# Lockfile primero: la capa de dependencias solo se reconstruye si cambia
+# uv.lock/pyproject.toml (no por cada cambio de código).
+COPY apps/server/pyproject.toml apps/server/uv.lock ./
+RUN uv sync --frozen --no-dev
+
+# Código después, para que la capa de deps quede cacheada.
+COPY apps/server/app ./app
+
+EXPOSE 8000
+
+# El seed es opt-in: docker compose lo ejecuta antes de uvicorn (idempotente).
+# La BD default del config es apps/server/mesa247.db; compose apunta
+# DATABASE_URL a un volumen (/data).
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

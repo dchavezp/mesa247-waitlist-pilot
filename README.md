@@ -68,6 +68,36 @@ Verificación rápida: `curl http://localhost:8000/health` → `{"status":"ok","
 > `DATABASE_URL`. Las tablas se crean solas al arrancar (sin migraciones en
 > el piloto). Si algo se rompe: `pnpm clean` borra la base y repite el seed.
 
+## Despliegue con Docker
+
+Imágenes y compose listos en la raíz para correr el piloto completo con un
+comando (requiere Docker):
+
+```sh
+docker compose up --build
+```
+
+- **Comensal** → `http://localhost:5173/join/la-terraza-azul-pe`
+- **Anfitrión** → `http://localhost:5174/host/la-terraza-azul-pe` (PIN `111333`)
+- **API/health** → `http://localhost:8000/health`
+
+Los puertos son los mismos del dev a propósito: CORS del backend y
+`VITE_API_BASE_URL` default funcionan sin tocar nada. El servidor usa SQLite
+en un volumen (`server-data`) y siembra los 3 locales demo en cada arranque
+(seed idempotente).
+
+Knobs del compose (con sus defaults):
+
+| Variable | Default | Qué controla |
+| --- | --- | --- |
+| `DATABASE_URL` | `sqlite:////data/mesa247.db` | Origen de datos; MySQL vía `mysql+pymysql://...` |
+| `JWT_SECRET` | `dev-secret-mesa247-cambiar-en-produccion` | Firma de los JWT del host — cambiar en producción |
+| `VITE_API_BASE_URL` | `http://localhost:8000` | Origen del API que compilan las web (build-time) |
+
+> `VITE_API_BASE_URL` es **build-time**: Vite lo embebe en el bundle. Si el
+> API no va a quedar en `http://localhost:8000` desde el navegador, rebuildeá
+> con `docker compose build --build-arg VITE_API_BASE_URL=https://...`.
+
 ## Comandos
 
 Turborepo desde la raíz:

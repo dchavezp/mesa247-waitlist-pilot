@@ -1,0 +1,54 @@
+name: mesa247
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-sqlite:////data/mesa247.db}
+      # Cambiar en producción (mismo default dev de core/config.py).
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-mesa247-cambiar-en-produccion}
+    volumes:
+      - server-data:/data
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=2)"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    # Seed idempotente al arrancar: la demo levanta con los 3 locales listos.
+    command: sh -c "python -m app.seed && exec uvicorn app.main:app --host 0.0.0.0 --port 8000"
+
+  web-guest:
+    build:
+      context: .
+      dockerfile: Dockerfile.web-guest
+      args:
+        # Build-time: el navegador apunta al API público, no al nombre del
+        # servicio (el cliente no usa proxy, D56).
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8000}
+    ports:
+      - "5173:80"
+    depends_on:
+      server:
+        condition: service_healthy
+
+  web-host:
+    build:
+      context: .
+      dockerfile: Dockerfile.web-host
+      args:
+        # Build-time: el navegador apunta al API público, no al nombre del
+        # servicio (el cliente no usa proxy, D56).
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8000}
+    ports:
+      - "5174:80"
+    depends_on:
+      server:
+        condition: service_healthy
+
+volumes:
+  server-data:

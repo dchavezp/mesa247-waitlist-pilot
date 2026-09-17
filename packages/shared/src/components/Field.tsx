@@ -1,7 +1,7 @@
 import type { ComponentProps } from 'react'
 import { useId } from 'react'
 
-type FieldProps = ComponentProps<'input'> & {
+export type FieldProps = ComponentProps<'input'> & {
   label: string
   error?: string
 }

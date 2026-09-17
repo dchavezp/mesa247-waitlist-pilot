@@ -1,4 +1,73 @@
+from datetime import datetime, timezone
+
+from sqlmodel import Session
+
+from app.core.db import engine
+from app.models import QueueEntry, QueueStatus
 from test_guest import auth_headers, join
+
+
+def test_day_report_counts_only_today_local_entries(client, make_restaurant, monkeypatch):
+    """The day cut follows the restaurant's local timezone (D61), not UTC (D26).
+
+    A join at 23:30 in Lima (UTC-5) is 04:30 UTC of the NEXT calendar day; the
+    old UTC-day cut counted it on the wrong day. With a fixed "now" of
+    2026-09-17 15:00 UTC (= 10:00 Lima), the local day starts 05:00 UTC, so a
+    ticket created at 04:30 UTC (yesterday 23:30 Lima) must not appear in
+    today's report or host queue, while one created at 14:00 UTC (today) must.
+    """
+
+    class _FixedDatetime(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            fixed = datetime(2026, 9, 17, 15, 0, 0, tzinfo=timezone.utc)
+            return fixed.astimezone(tz) if tz is not None else fixed
+
+    monkeypatch.setattr("app.services.tickets.datetime", _FixedDatetime)
+
+    restaurant = make_restaurant(country_code="PE")
+    slug = restaurant.slug
+    headers = auth_headers(client, slug)
+
+    with Session(engine) as session:
+        # Ayer 23:30 hora Lima == hoy 04:30 UTC: NO es de hoy (D61), pero el
+        # corte UTC (D26) lo contaba como tal.
+        session.add(
+            QueueEntry(
+                restaurant_id=restaurant.id,
+                customer_name="Anoche",
+                phone_number="999888777",
+                party_size=2,
+                status=QueueStatus.CANCELLED,
+                position_index=1,
+                created_at=datetime(2026, 9, 17, 4, 30),
+            )
+        )
+        # Hoy 09:00 hora Lima == hoy 14:00 UTC: sí es de hoy.
+        session.add(
+            QueueEntry(
+                restaurant_id=restaurant.id,
+                customer_name="Hoy",
+                phone_number="999888776",
+                party_size=2,
+                status=QueueStatus.SEATED,
+                position_index=2,
+                created_at=datetime(2026, 9, 17, 14, 0),
+            )
+        )
+        session.commit()
+
+    report = client.get(f"/host/{slug}/report", headers=headers).json()
+    assert report == {
+        "joined": 2,
+        "seated": 2,
+        "left_without_seat": 0,
+        "no_show": 0,
+        "avg_wait_minutes": 0,
+    }
+
+    queue = client.get(f"/host/{slug}/queue", headers=headers).json()
+    assert [item["customer_name"] for item in queue] == ["Hoy"]
 
 
 def test_notify_then_seat_is_a_valid_flow(client, make_restaurant):

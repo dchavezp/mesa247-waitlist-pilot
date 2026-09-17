@@ -1,6 +1,7 @@
 import threading
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 
 from sqlalchemy import func
 from sqlmodel import Session, select
@@ -11,6 +12,15 @@ from ..models import QueueEntry, QueueStatus, Restaurant
 ACTIVE_STATUSES = (QueueStatus.WAITING, QueueStatus.NOTIFIED)
 TERMINAL_STATUSES = (QueueStatus.SEATED, QueueStatus.CANCELLED, QueueStatus.NO_SHOW)
 SEATED_HISTORY_WINDOW = 10
+
+# The pilot stores naive-UTC timestamps (D26/D55), but "today" means the
+# restaurant's local day: a join at 23:30 in Lima is 04:30 UTC of the NEXT
+# calendar day, and the D26 UTC-day cut counted it on the wrong day. IANA
+# names come from `zoneinfo` (stdlib); unknown countries fall back to UTC.
+_LOCAL_TZ: dict[str, str] = {
+    "PE": "America/Lima",
+    "CL": "America/Santiago",
+}
 
 # Position assignment is read-then-write (COUNT + INSERT) and neither DB offers
 # a portable conditional unique index on active positions (terminal rows keep
@@ -104,9 +114,7 @@ def get_host_queue(session: Session, restaurant: Restaurant) -> list[HostQueueIt
     this returns every ticket created today — active ones in queue order, then
     terminal ones most recent first. Reorder still validates only against the
     active ids (contrato D3)."""
-    now_utc = _as_utc_naive(datetime.now(timezone.utc))
-    day_start = now_utc.replace(hour=0, minute=0, second=0, microsecond=0)
-    day_end = day_start + timedelta(days=1)
+    day_start, day_end = _local_day_bounds(restaurant)
     entries = session.exec(
         select(QueueEntry).where(
             QueueEntry.restaurant_id == restaurant.id,
@@ -189,9 +197,7 @@ def reorder_queue(
 
 
 def get_day_report(session: Session, restaurant: Restaurant) -> DayReport:
-    now_utc = _as_utc_naive(datetime.now(timezone.utc))
-    day_start = now_utc.replace(hour=0, minute=0, second=0, microsecond=0)
-    day_end = day_start + timedelta(days=1)
+    day_start, day_end = _local_day_bounds(restaurant)
     created_today = session.exec(
         select(QueueEntry).where(
             QueueEntry.restaurant_id == restaurant.id,
@@ -288,3 +294,16 @@ def _as_utc_naive(value: datetime) -> datetime:
     if value.tzinfo is not None:
         return value.astimezone(timezone.utc).replace(tzinfo=None)
     return value
+
+
+def _local_day_bounds(restaurant: Restaurant) -> tuple[datetime, datetime]:
+    # "Today" in the restaurant's local timezone, projected to naive UTC
+    # because that is what the model stores (D26) — a late-night join
+    # belongs to its local day, not to the next UTC day.
+    local_now = datetime.now(ZoneInfo(_LOCAL_TZ.get(restaurant.country_code, "UTC")))
+    local_start = local_now.replace(hour=0, minute=0, second=0, microsecond=0)
+    local_end = local_start + timedelta(days=1)
+    return (
+        _as_utc_naive(local_start.astimezone(timezone.utc)),
+        _as_utc_naive(local_end.astimezone(timezone.utc)),
+    )
