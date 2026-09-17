@@ -114,10 +114,12 @@ local → `401`.
 | Método | Ruta | Auth | Body | Respuesta |
 | --- | --- | --- | --- | --- |
 | `GET` | `/health` | — | — | `{status, database}` |
+| `GET` | `/join/{slug}` | — | — | `{slug, name, description}` |
 | `POST` | `/join/{slug}` | — | `{customer_name, phone_number, party_size}` | `201` `{id, position}` |
 | `GET` | `/tickets/{ticket_id}` | — | — | `{id, status, position, estimated_minutes}` |
 | `POST` | `/tickets/{ticket_id}/no-show` | — | — | `{id, status, position, estimated_minutes}` |
 | `POST` | `/host/{slug}/login` | — | `{pin}` | `{access_token, token_type, expires_in}` |
+| `GET` | `/host/{slug}` | Bearer | — | `{slug, name, description}` |
 | `GET` | `/host/{slug}/queue` | Bearer | — | `[{id, customer_name, party_size, status, position, estimated_minutes, notified_at}]` |
 | `PATCH` | `/tickets/{ticket_id}` | Bearer | `{action}` | `{id, status, position, estimated_minutes}` |
 | `POST` | `/host/{slug}/queue/reorder` | Bearer | `{order: [ids]}` | `[{id, customer_name, party_size, status, position, estimated_minutes, notified_at}]` |
@@ -174,6 +176,7 @@ docs/
   convenciones.md    Convenciones de código
   arquitectura.md    Reglas de capas (solo el backend)
 nota_tecnica_mesa247.md    Entrega técnica (entregable 1)
+entregable-4.md            Algo que construí yo (entregable 4) — qué corté, qué salió mal, qué haría distinto
 prueba-fullstack-mesa247-pages-dev.md   El brief del examen (fuente de verdad del scope)
 ```
 

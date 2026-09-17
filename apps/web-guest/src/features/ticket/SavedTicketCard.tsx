@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { useEffect } from 'react'
+import { useCallNotification } from './useCallNotification'
 import { useTicketStatus } from './useTicketStatus'
 
 const TERMINAL_STATUSES = new Set(['SEATED', 'CANCELLED', 'NO_SHOW'])
@@ -14,26 +15,31 @@ export function SavedTicketCard({
 }) {
   const { data, isLoading, isError } = useTicketStatus(id)
 
+  useCallNotification(id, data?.status)
+
   useEffect(() => {
     if (data && TERMINAL_STATUSES.has(data.status)) onTerminal(id)
   }, [data, id, onTerminal])
-
-  const card = 'flex items-stretch gap-4 rounded-2xl border bg-surface-raised p-4 shadow-card transition-colors'
 
   return (
     <Link
       to="/tickets/$id"
       params={{ id }}
-      className={`${card} ${
-        data?.status === 'NOTIFIED' ? 'border-brand' : 'border-line'
-      }`}
+      className="flex items-center gap-4 rounded-lg px-2 py-3 transition-colors hover:bg-surface-raised border border-ink"
     >
+      {data?.status === 'NOTIFIED' && !isError ? (
+        <span
+          aria-hidden="true"
+          className="-ml-2 h-12 w-2 shrink-0 rounded-full bg-brand animate-pulse"
+        />
+      ) : null}
+
       {isLoading ? (
         <>
-          <div className="mx-auto h-12 w-16 animate-pulse rounded-lg bg-surface" />
+          <div className="h-12 w-16 shrink-0 animate-pulse rounded-lg bg-surface-raised" />
           <div className="flex-1 space-y-2 py-1">
-            <div className="h-4 w-40 animate-pulse rounded-full bg-surface" />
-            <div className="h-3 w-24 animate-pulse rounded-full bg-surface" />
+            <div className="h-4 w-40 animate-pulse rounded-full bg-surface-raised" />
+            <div className="h-3 w-24 animate-pulse rounded-full bg-surface-raised" />
           </div>
         </>
       ) : null}
@@ -49,17 +55,13 @@ export function SavedTicketCard({
 
       {data && !isError ? (
         <>
-          <div className="flex min-w-12 items-center justify-center">
-            <span
-              className={
-                data.status === 'WAITING' || data.status === 'NOTIFIED'
-                  ? 'text-3xl font-semibold leading-none tracking-tight text-ink'
-                  : 'text-xl font-semibold leading-none tracking-tight text-ink-muted'
-              }
-            >
-              {data.position}
-            </span>
-          </div>
+          {data.status === 'WAITING' || data.status === 'NOTIFIED' ? (
+            <div className="flex min-w-12 items-center justify-center">
+              <span className="text-3xl font-semibold leading-none tracking-tight text-ink">
+                {data.position}
+              </span>
+            </div>
+          ) : null}
           <div className="min-w-0 flex-1 self-center">
             {data.status === 'WAITING' ? (
               <>
@@ -74,8 +76,8 @@ export function SavedTicketCard({
               </>
             ) : null}
             {data.status === 'NOTIFIED' ? (
-              <p className="text-sm font-semibold text-brand">
-                ¡Tu mesa está lista!
+              <p className="text-sm font-semibold text-brand animate-pulse">
+                ¡Tu mesa está lista! <span className='text-ink text-xs'> | Acércate a la recepción</span>
               </p>
             ) : null}
             {data.status === 'SEATED' ? (

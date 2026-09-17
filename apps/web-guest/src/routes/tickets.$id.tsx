@@ -1,8 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect } from 'react'
+import { BackToHome } from '../features/nav/BackToHome'
 import { LeaveTicketButton } from '../features/ticket/LeaveTicketButton'
 import { TicketCard, LoadingTicket, TicketError } from '../features/ticket/TicketCard'
 import { removeSavedTicket } from '../features/ticket/ticketStorage'
+import { useCallNotification } from '../features/ticket/useCallNotification'
 import { useTicketStatus } from '../features/ticket/useTicketStatus'
 
 const TERMINAL_STATUSES = new Set(['SEATED', 'CANCELLED', 'NO_SHOW'])
@@ -15,6 +17,8 @@ function TicketRoute() {
   const { id } = Route.useParams()
   const { data, isLoading, isError, refetch } = useTicketStatus(id)
 
+  useCallNotification(id, data?.status)
+
   // El turno terminó (sentado, cancelado o no-show): deja de pertenecer a
   // "Tus turnos". La vista terminal se mantiene en esta página.
   useEffect(() => {
@@ -24,6 +28,9 @@ function TicketRoute() {
   return (
     <main className="flex min-h-dvh items-center justify-center bg-surface px-4 py-10">
       <div className="w-full max-w-sm">
+        <div className="mb-6">
+          <BackToHome />
+        </div>
         {isLoading ? <LoadingTicket /> : null}
         {isError ? <TicketError onRetry={() => void refetch()} /> : null}
         {data && !isError ? (

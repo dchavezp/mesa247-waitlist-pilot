@@ -8,9 +8,21 @@ from ...services.tickets import (
     get_ticket_status,
     join_queue,
 )
-from ..schemas import JoinRequest, JoinResponse, TicketStatusResponse
+from ..schemas import JoinRequest, JoinResponse, RestaurantInfoResponse, TicketStatusResponse
 
 router = APIRouter(tags=["guest"])
+
+
+@router.get("/join/{slug}", response_model=RestaurantInfoResponse)
+def restaurant_info(
+    slug: str, session: Session = Depends(get_session)
+) -> RestaurantInfoResponse:
+    # Público: el comensal confirma el local antes de dar sus datos. Reverso
+    # del GET /host/{slug} autenticado (mismo shape, sin token).
+    restaurant = get_restaurant_by_slug(session, slug)
+    if restaurant is None:
+        raise HTTPException(status_code=404, detail="Local no encontrado")
+    return RestaurantInfoResponse.model_validate(restaurant)
 
 
 @router.post("/join/{slug}", status_code=201, response_model=JoinResponse)

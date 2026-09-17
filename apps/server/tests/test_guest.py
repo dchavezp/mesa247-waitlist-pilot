@@ -79,6 +79,19 @@ def test_join_unknown_restaurant_returns_404(client):
     assert response.status_code == 404
 
 
+def test_join_info_returns_restaurant_name(client, make_restaurant):
+    # Public (no auth): the guest confirms the restaurant before sharing data.
+    restaurant = make_restaurant(name="La Cantina")
+    info = client.get(f"/join/{restaurant.slug}").json()
+    assert info["slug"] == restaurant.slug
+    assert info["name"] == "La Cantina"
+    assert "description" in info
+
+
+def test_join_info_unknown_restaurant_returns_404(client):
+    assert client.get("/join/does-not-exist").status_code == 404
+
+
 def test_join_rejects_invalid_payload(client, make_restaurant):
     slug = make_restaurant().slug
     base = {"customer_name": "Ana", "phone_number": "999888777", "party_size": 2}

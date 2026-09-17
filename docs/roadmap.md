@@ -61,6 +61,12 @@
 - [x] **T9. Vista anfitrión** (`/host/:slug`, detrás del login T16)
   - Cola en vivo, llamar/sentar/cancelar, priorizar (frecuente), modal con QR de la puerta.
 
+- [ ] **T18. Comensal: nombre del restaurante en el join** (U37)
+  - `GET /join/{slug}` público → nombre + descripción del local (mismo shape que
+    `GET /host/{slug}` autenticado, sin token).
+  - El join muestra el nombre del restaurante (eyebrow) y su descripción en vez
+    del genérico "Mesa247"; si falla, cae al copy genérico y el form sigue usable.
+
 ## Fase 3 — Cierre y entrega
 
 - [x] **T10. Reporte del día en web + endpoint ya listo**

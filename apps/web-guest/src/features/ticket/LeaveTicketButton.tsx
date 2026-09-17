@@ -16,7 +16,7 @@ export function LeaveTicketButton({ id }: { id: string }) {
   return (
     <AlertDialog.Root open={open} onOpenChange={setOpen}>
       <AlertDialog.Trigger
-        render={<Button variant="secondary" className="w-full" />}
+        render={<Button variant="danger" className="w-full" />}
       >
         Ya no voy
       </AlertDialog.Trigger>

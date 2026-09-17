@@ -3,9 +3,11 @@ import { useNavigate } from '@tanstack/react-router'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm, type Resolver } from 'react-hook-form'
 import { ApiError, Button, Field, PhoneField, countryCodeForSlug } from '@mesa247/shared'
-import { joinQueue } from '../../api/guest'
+import {  joinQueue } from '../../api/guest'
 import { saveSavedTicket } from '../ticket/ticketStorage'
+import { requestNotificationPermission } from '../ticket/useCallNotification'
 import { joinSchema, type JoinForm } from './joinSchema'
+import { useRestaurantInfo } from './useRestaurantInfo'
 
 interface JoinFormProps {
   slug: string
@@ -13,8 +15,11 @@ interface JoinFormProps {
 
 export function JoinForm({ slug }: JoinFormProps) {
   const navigate = useNavigate()
+  const { data: restaurant } = useRestaurantInfo(slug)
   const [formError, setFormError] = useState<string | null>(null)
+  
   const defaultCountryCode = countryCodeForSlug(slug)
+
 
   const {
     register,
@@ -37,9 +42,8 @@ export function JoinForm({ slug }: JoinFormProps) {
         phone_number: `${defaultCountryCode}${values.phone}`,
         party_size: values.party_size,
       })
-      // El turno queda en "Tus turnos" (localStorage, TTL 8 h) aunque cierre
-      // el navegador; la ruta del turno lo limpia al llegar a un estado terminal.
       saveSavedTicket(ticket.id)
+      requestNotificationPermission()
       navigate({ to: '/tickets/$id', params: { id: ticket.id } })
     } catch (error) {
       setFormError(
@@ -51,19 +55,18 @@ export function JoinForm({ slug }: JoinFormProps) {
   })
 
   return (
-    <section className="rounded-2xl border border-line bg-surface-raised shadow-card">
-      <header className="px-6 pt-6">
-        <h1 className="text-2xl font-semibold tracking-tight text-ink">
-          Únete a la fila
-        </h1>
-        <p className="mt-1.5 text-sm text-ink-muted">
+    <div className="w-full">
+      <p className="text-xs font-medium uppercase tracking-wide text-ink-muted">
+        {restaurant?.name ?? 'Mesa247'}
+      </p>
+      <h1 className="mt-2 text-2xl font-semibold tracking-tight text-ink">
+        Únete a la fila
+      </h1>
+      <p className="mt-1.5 text-sm text-ink-muted">
           Completa tus datos para ingresar a la fila virtual.
-        </p>
-      </header>
-
-      <div className="mx-6 mt-5 border-t border-dashed border-line" aria-hidden="true" />
-
-      <form onSubmit={onSubmit} className="space-y-5 px-6 py-5" noValidate>
+      </p>
+      
+      <form onSubmit={onSubmit} className="mt-8 space-y-5" noValidate>
         <Field
           label="Nombre"
           placeholder="Tu nombre"
@@ -96,6 +99,6 @@ export function JoinForm({ slug }: JoinFormProps) {
           {isSubmitting ? 'Uniéndote…' : 'Unirse'}
         </Button>
       </form>
-    </section>
+    </div>
   )
 }
