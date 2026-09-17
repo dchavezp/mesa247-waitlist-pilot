@@ -7,6 +7,12 @@ WhatsApp, short polling (5 s) en vez de websockets, sin drag & drop pesado.
 El análisis de cortes y decisiones vive en `nota_tecnica_mesa247.md` y
 `docs/mapeo-conversaciones.md`.
 
+## Demo en video
+
+<video src="./demo.mp4" controls title="Demo del piloto Mesa247"></video>
+
+Si el video no se visualiza, [descargalo aquí](./demo.mp4).
+
 ## Stack
 
 | Capa | Tecnologías |
